@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/entities";
+import { APP_ROUTES } from "@/shared";
 
 const HomePage: React.FC = () => {
   const { user, loading } = useAuth();
@@ -8,7 +9,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/login");
+      navigate(APP_ROUTES.LOGIN.path);
     }
   }, [user, loading, navigate]);
 

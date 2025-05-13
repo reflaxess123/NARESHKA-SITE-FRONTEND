@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/entities";
+import { APP_ROUTES } from "@/shared";
 
 const ProtectedRoute: React.FC = () => {
   const { user, loading } = useAuth();
@@ -16,7 +17,7 @@ const ProtectedRoute: React.FC = () => {
 
   if (!user) {
     // Если пользователь не аутентифицирован, перенаправляем на страницу входа
-    return <Navigate to="/login" replace />;
+    return <Navigate to={APP_ROUTES.LOGIN.path} replace />;
   }
 
   // Если пользователь аутентифицирован, отображаем дочерний маршрут

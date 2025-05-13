@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Card,
   CardContent,
@@ -6,12 +6,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/entities";
+import { APP_ROUTES } from "@/shared";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate(APP_ROUTES.HOME.path);
     }
   }, [user, navigate]);
 
@@ -31,7 +32,7 @@ const LoginPage: React.FC = () => {
     setError(null);
     const result = await login(email, password);
     if (result.success) {
-      navigate("/profile");
+      navigate(APP_ROUTES.PROFILE.path);
     } else {
       setError(result.message || "Не удалось войти.");
     }
@@ -55,7 +56,9 @@ const LoginPage: React.FC = () => {
                 type="email"
                 placeholder="m@example.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
                 required
               />
             </div>
@@ -65,7 +68,9 @@ const LoginPage: React.FC = () => {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.target.value)
+                }
                 required
               />
             </div>
@@ -79,7 +84,7 @@ const LoginPage: React.FC = () => {
           <p>
             Нет аккаунта?
             {
-              <Link to="/register" className="ml-1 underline">
+              <Link to={APP_ROUTES.REGISTER.path} className="ml-1 underline">
                 Зарегистрироваться
               </Link>
             }

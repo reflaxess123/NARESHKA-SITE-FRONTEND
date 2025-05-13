@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css"; // Tailwind CSS
+import { App } from "."; // Путь к App из src/app/index.ts
+import "./styles/index.css"; // Путь к стилям из src/app/styles/
 
 const rootElement = document.getElementById("root");
 if (rootElement) {

@@ -1,7 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { Button } from "./ui/button"; // Предполагается, что Button находится здесь
+import { useAuth } from "@/entities";
+import { Button } from "@/shared/ui/button";
+import { APP_ROUTES } from "@/shared"; // Исправлено
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -10,7 +11,7 @@ const Navbar: React.FC = () => {
   const handleLogout = async () => {
     const result = await logout();
     if (result.success) {
-      navigate("/login");
+      navigate(APP_ROUTES.LOGIN.path);
     } else {
       alert(result.message || "Не удалось выйти. Попробуйте снова.");
     }
@@ -20,14 +21,17 @@ const Navbar: React.FC = () => {
     <nav className="bg-gray-100 text-1xl text-black p-4 shadow-md pr-10">
       <div className="flex justify-end items-center gap-2">
         <Button asChild>
-          <Link to="/" className="hover:text-gray-500">
+          <Link to={APP_ROUTES.HOME.path} className="hover:text-gray-500">
             Главная
           </Link>
         </Button>
         {user ? (
           <>
             <Button asChild>
-              <Link to="/profile" className="hover:text-gray-500">
+              <Link
+                to={APP_ROUTES.PROFILE.path}
+                className="hover:text-gray-500"
+              >
                 Профиль
               </Link>
             </Button>
@@ -42,12 +46,15 @@ const Navbar: React.FC = () => {
         ) : (
           <>
             <Button asChild>
-              <Link to="/login" className="hover:text-gray-500">
+              <Link to={APP_ROUTES.LOGIN.path} className="hover:text-gray-500">
                 Вход
               </Link>
             </Button>
             <Button asChild>
-              <Link to="/register" className="hover:text-gray-500">
+              <Link
+                to={APP_ROUTES.REGISTER.path}
+                className="hover:text-gray-500"
+              >
                 Регистрация
               </Link>
             </Button>

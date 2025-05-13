@@ -1,14 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/ui/card";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/entities";
+import { APP_ROUTES } from "@/shared";
 
 const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -17,7 +18,7 @@ const ProfilePage: React.FC = () => {
   const handleLogout = async () => {
     const result = await logout();
     if (result.success) {
-      navigate("/login");
+      navigate(APP_ROUTES.LOGIN.path);
     } else {
       // Можно добавить обработку ошибок, если выход не удался
       console.error(result.message || "Не удалось выйти");
