@@ -185,6 +185,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
         {
           method: "POST",
+          credentials: "include",
         }
       );
       if (response.ok) {
