@@ -10,6 +10,8 @@ export class SessionStore {
   isAuthenticated: boolean = false;
   isSessionLoading: boolean = true; // Начальное состояние - загрузка сессии
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private rootStore: RootStore;
   private queryClient: QueryClient;
 
