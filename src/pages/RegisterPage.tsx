@@ -1,104 +1,87 @@
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { useMutation } from '@tanstack/react-query';
-import { Button, Form, Input, notification, Spin, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useStore } from '../store/rootStore';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-const { Title } = Typography;
-
-const RegisterPage: React.FC = observer(() => {
+const RegisterPage: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const { register } = useAuth();
   const navigate = useNavigate();
-  const { authStore } = useStore();
 
-  const registerMutation = useMutation({
-    mutationFn: (values: any) =>
-      authStore.register(values.email, values.password),
-    onSuccess: () => {
-      notification.success({
-        message: 'Регистрация успешна!',
-        description: `Добро пожаловать, ${authStore.user?.email}! Теперь вы можете войти.`,
-      });
-      navigate('/login');
-    },
-  });
-
-  const onFinish = (values: any) => {
-    registerMutation.mutate(values);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    const result = await register(email, password);
+    if (result.success) {
+      navigate("/profile"); // После успешной регистрации переходим на страницу профиля
+    } else {
+      setError(result.message || "Не удалось зарегистрироваться.");
+    }
   };
 
-  if (authStore.isAuthenticated) {
-    navigate('/articles');
-    return null;
-  }
-
   return (
-    <div style={{ maxWidth: 400, margin: 'auto', paddingTop: 50 }}>
-      <Title level={2} style={{ textAlign: 'center' }}>
-        Регистрация
-      </Title>
-      <Form name='register' onFinish={onFinish} layout='vertical'>
-        <Form.Item
-          name='email'
-          label='Email'
-          rules={[
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Регистрация</CardTitle>
+          <CardDescription>
+            Создайте новый аккаунт, указав свой email и пароль.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <form onSubmit={handleSubmit} className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Пароль</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <Button type="submit" className="w-full">
+              Зарегистрироваться
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="text-sm">
+          <p>
+            Уже есть аккаунт?
             {
-              required: true,
-              message: 'Пожалуйста, введите ваш Email!',
-              type: 'email',
-            },
-          ]}
-        >
-          <Input prefix={<MailOutlined />} placeholder='Email' />
-        </Form.Item>
-        <Form.Item
-          name='password'
-          label='Пароль'
-          rules={[
-            { required: true, message: 'Пожалуйста, введите ваш пароль!' },
-          ]}
-        >
-          <Input.Password prefix={<LockOutlined />} placeholder='Пароль' />
-        </Form.Item>
-        <Form.Item
-          name='confirmPassword'
-          label='Подтвердите Пароль'
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            { required: true, message: 'Пожалуйста, подтвердите ваш пароль!' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('Пароли не совпадают!'));
-              },
-            }),
-          ]}
-        >
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder='Подтвердите пароль'
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            type='primary'
-            htmlType='submit'
-            loading={registerMutation.isPending}
-            block
-          >
-            {registerMutation.isPending ? <Spin /> : 'Зарегистрироваться'}
-          </Button>
-        </Form.Item>
-        <div style={{ textAlign: 'center' }}>
-          Уже есть аккаунт? <a onClick={() => navigate('/login')}>Войти</a>
-        </div>
-      </Form>
+              <Link to="/login" className="ml-1 underline">
+                Войти
+              </Link>
+            }
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
-});
+};
 
 export default RegisterPage;

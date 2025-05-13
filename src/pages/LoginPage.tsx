@@ -1,82 +1,93 @@
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { useMutation } from '@tanstack/react-query';
-import { Button, Form, Input, notification, Spin, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useStore } from '../store/rootStore';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-const { Title } = Typography;
-
-const LoginPage: React.FC = observer(() => {
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const { login, user } = useAuth();
   const navigate = useNavigate();
-  const { authStore } = useStore();
 
-  const loginMutation = useMutation({
-    mutationFn: (values: any) => authStore.login(values.email, values.password),
-    onSuccess: () => {
-      notification.success({
-        message: 'Вход выполнен успешно!',
-        description: `Добро пожаловать, ${authStore.user?.email}!`,
-      });
-      navigate('/articles');
-    },
-  });
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
-  const onFinish = (values: any) => {
-    loginMutation.mutate(values);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    const result = await login(email, password);
+    if (result.success) {
+      navigate("/profile");
+    } else {
+      setError(result.message || "Не удалось войти.");
+    }
   };
 
-  if (authStore.isAuthenticated) {
-    navigate('/articles');
-    return null;
-  }
-
   return (
-    <div style={{ maxWidth: 400, margin: 'auto', paddingTop: 50 }}>
-      <Title level={2} style={{ textAlign: 'center' }}>
-        Вход
-      </Title>
-      <Form name='login' onFinish={onFinish} layout='vertical'>
-        <Form.Item
-          name='email'
-          label='Email'
-          rules={[
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Вход</CardTitle>
+          <CardDescription>
+            Введите свой email и пароль для входа в аккаунт.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <form onSubmit={handleSubmit} className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Пароль</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <Button type="submit" className="w-full">
+              Войти
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="text-sm">
+          <p>
+            Нет аккаунта?
             {
-              required: true,
-              message: 'Пожалуйста, введите ваш Email!',
-              type: 'email',
-            },
-          ]}
-        >
-          <Input prefix={<MailOutlined />} placeholder='Email' />
-        </Form.Item>
-        <Form.Item
-          name='password'
-          label='Пароль'
-          rules={[
-            { required: true, message: 'Пожалуйста, введите ваш пароль!' },
-          ]}
-        >
-          <Input.Password prefix={<LockOutlined />} placeholder='Пароль' />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            type='primary'
-            htmlType='submit'
-            loading={loginMutation.isPending}
-            block
-          >
-            {loginMutation.isPending ? <Spin /> : 'Войти'}
-          </Button>
-        </Form.Item>
-        <div style={{ textAlign: 'center' }}>
-          Нет аккаунта?{' '}
-          <a onClick={() => navigate('/register')}>Зарегистрироваться</a>
-        </div>
-      </Form>
+              <Link to="/register" className="ml-1 underline">
+                Зарегистрироваться
+              </Link>
+            }
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
-});
+};
 
 export default LoginPage;
