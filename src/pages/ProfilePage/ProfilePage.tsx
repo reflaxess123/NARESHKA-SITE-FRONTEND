@@ -1,3 +1,5 @@
+import { useLogoutMutation, useSessionStore } from "@/entities/session";
+import { APP_ROUTES } from "@/shared";
 import { Button } from "@/shared/ui/button";
 import {
   Card,
@@ -6,30 +8,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/entities";
-import { APP_ROUTES } from "@/shared";
 
-const ProfilePage: React.FC = () => {
-  const { user, logout } = useAuth();
+const ProfilePageInternal: React.FC = () => {
+  const sessionStore = useSessionStore();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    const result = await logout();
-    if (result.success) {
-      navigate(APP_ROUTES.LOGIN.path);
-    } else {
-      // Можно добавить обработку ошибок, если выход не удался
-      console.error(result.message || "Не удалось выйти");
-      alert(result.message || "Не удалось выйти. Попробуйте снова.");
-    }
+  const logoutMutation = useLogoutMutation({
+    onSuccess: () => {
+      navigate(APP_ROUTES.LOGIN.path, { replace: true });
+    },
+    onError: (error) => {
+      console.error("Logout failed:", error.message);
+      alert(error.message || "Не удалось выйти. Попробуйте снова.");
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
   };
 
-  if (!user) {
-    // Это состояние не должно возникать, если ProtectedRoute работает корректно
-    return <p>Пожалуйста, войдите, чтобы увидеть эту страницу.</p>;
+  if (!sessionStore.currentUser) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Загрузка данных пользователя или ошибка...</p>
+      </div>
+    );
   }
+
+  const { currentUser } = sessionStore;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -43,22 +52,23 @@ const ProfilePage: React.FC = () => {
         <CardContent className="grid gap-4">
           <div className="space-y-2">
             <p>
-              <span className="font-semibold">ID:</span> {user.id}
+              <span className="font-semibold">ID:</span> {currentUser.id}
             </p>
             <p>
-              <span className="font-semibold">Email:</span> {user.email}
+              <span className="font-semibold">Email:</span> {currentUser.email}
             </p>
             <p>
               <span className="font-semibold">Дата регистрации:</span>{" "}
-              {new Date(user.createdAt).toLocaleDateString()}
+              {new Date(currentUser.createdAt).toLocaleDateString()}
             </p>
           </div>
           <Button
             onClick={handleLogout}
             variant="destructive"
             className="w-full"
+            disabled={logoutMutation.isPending}
           >
-            Выйти
+            {logoutMutation.isPending ? "Выход..." : "Выйти"}
           </Button>
         </CardContent>
       </Card>
@@ -66,4 +76,4 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default ProfilePage;
+export const ProfilePage = observer(ProfilePageInternal);

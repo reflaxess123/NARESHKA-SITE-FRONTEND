@@ -19,6 +19,18 @@ export interface RegisterResponse {
   userId: number;
 }
 
+// Типы для данных запроса
+export interface LoginRequestData {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequestData {
+  email: string;
+  password: string;
+  // Если есть другие поля для регистрации, например, username, добавьте их сюда
+}
+
 export interface AuthContextType {
   user: User | null;
   loading: boolean;

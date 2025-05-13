@@ -1,14 +1,15 @@
 export {
-  fetchProfileRequest,
-  loginRequest,
-  registerRequest,
-  logoutRequest,
-} from "./session/api/authApi";
+  useLoginMutation,
+  useLogoutMutation,
+  useRegisterMutation,
+  useSessionStore,
+  useUserProfile,
+} from "./session";
 export type {
-  User,
+  LoginRequestData,
   LoginResponse,
+  RegisterRequestData,
   RegisterResponse,
-  AuthContextType,
-} from "./session/model/types";
-
-export { AuthProvider, useAuth } from "./session/context/AuthContext";
+  SessionStoreType,
+  User,
+} from "./session";

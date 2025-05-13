@@ -1,3 +1,9 @@
+import { useSessionStore } from "@/entities/session";
+import { ProtectedRoute } from "@/features";
+import { HomePage, LoginPage, ProfilePage, RegisterPage } from "@/pages";
+import { APP_ROUTES } from "@/shared";
+import { Navbar } from "@/widgets";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import {
   Outlet,
@@ -5,11 +11,6 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/entities";
-import { ProtectedRoute } from "@/features";
-import { HomePage, LoginPage, ProfilePage, RegisterPage } from "@/pages";
-import { APP_ROUTES } from "@/shared";
-import { Navbar } from "@/widgets";
 
 const Layout: React.FC = () => {
   return (
@@ -22,12 +23,10 @@ const Layout: React.FC = () => {
   );
 };
 
-// Отдельный компонент для проверки AuthProvider
-// Это необходимо, чтобы использовать useAuth внутри компонента, обернутого AuthProvider
-const AppRoutes: React.FC = () => {
-  const { loading } = useAuth(); // Пример использования useAuth, если нужно
+const AppRoutes: React.FC = observer(() => {
+  const sessionStore = useSessionStore();
 
-  if (loading) {
+  if (sessionStore.isSessionLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p>Загрузка приложения...</p>
@@ -38,7 +37,9 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path={APP_ROUTES.HOME.path} element={<HomePage />} />
+        <Route path={APP_ROUTES.HOME.path} element={<ProtectedRoute />}>
+          <Route index element={<HomePage />} />
+        </Route>
         <Route path={APP_ROUTES.LOGIN.path} element={<LoginPage />} />
         <Route path={APP_ROUTES.REGISTER.path} element={<RegisterPage />} />
         <Route path={APP_ROUTES.PROFILE.path} element={<ProtectedRoute />}>
@@ -47,14 +48,12 @@ const AppRoutes: React.FC = () => {
       </Route>
     </Routes>
   );
-};
+});
 
 const App: React.FC = () => {
   return (
     <Router>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <AppRoutes />
     </Router>
   );
 };

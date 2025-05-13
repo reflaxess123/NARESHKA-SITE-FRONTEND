@@ -1,26 +1,22 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/entities";
-import { APP_ROUTES } from "@/shared";
+import { useSessionStore } from "@/entities/session";
+import { observer } from "mobx-react-lite";
+import React from "react";
 
-const HomePage: React.FC = () => {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
+const HomePageInternal: React.FC = () => {
+  const sessionStore = useSessionStore();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate(APP_ROUTES.LOGIN.path);
-    }
-  }, [user, loading, navigate]);
-
-  if (loading || !user) {
-    return null;
+  if (!sessionStore.currentUser) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Ошибка: пользователь не найден, хотя сессия активна.</p>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 text-center">
       <h1 className="text-4xl font-bold mb-6">
-        Добро пожаловать, {user.email}!
+        Добро пожаловать, {sessionStore.currentUser.email}!
       </h1>
       <p className="text-lg mb-8">
         Вы успешно вошли в систему. Ваш профиль и опция выхода доступны в панели
@@ -30,4 +26,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export const HomePage = observer(HomePageInternal);

@@ -1,27 +1,25 @@
+import { useSessionStore } from "@/entities";
+import { APP_ROUTES } from "@/shared";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "@/entities";
-import { APP_ROUTES } from "@/shared";
 
-const ProtectedRoute: React.FC = () => {
-  const { user, loading } = useAuth();
+const ProtectedRouteInternal: React.FC = () => {
+  const sessionStore = useSessionStore();
 
-  if (loading) {
-    // Можно отобразить компонент загрузки, пока проверяется статус аутентификации
+  if (sessionStore.isSessionLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p>Загрузка...</p>
+        <p>Проверка сессии...</p>
       </div>
     );
   }
 
-  if (!user) {
-    // Если пользователь не аутентифицирован, перенаправляем на страницу входа
+  if (!sessionStore.isAuthenticated) {
     return <Navigate to={APP_ROUTES.LOGIN.path} replace />;
   }
 
-  // Если пользователь аутентифицирован, отображаем дочерний маршрут
   return <Outlet />;
 };
 
-export default ProtectedRoute;
+export const ProtectedRoute = observer(ProtectedRouteInternal);

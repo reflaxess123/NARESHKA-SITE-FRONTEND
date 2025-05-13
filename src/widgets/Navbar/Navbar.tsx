@@ -1,20 +1,25 @@
+import { useLogoutMutation, useSessionStore } from "@/entities/session";
+import { APP_ROUTES } from "@/shared";
+import { Button } from "@/shared/ui/button";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/entities";
-import { Button } from "@/shared/ui/button";
-import { APP_ROUTES } from "@/shared"; // Исправлено
 
-const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+const NavbarInternal: React.FC = () => {
+  const sessionStore = useSessionStore();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    const result = await logout();
-    if (result.success) {
-      navigate(APP_ROUTES.LOGIN.path);
-    } else {
-      alert(result.message || "Не удалось выйти. Попробуйте снова.");
-    }
+  const logoutMutation = useLogoutMutation({
+    onSuccess: () => {
+      navigate(APP_ROUTES.LOGIN.path, { replace: true });
+    },
+    onError: (error) => {
+      alert(error.message || "Не удалось выйти. Попробуйте снова.");
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
   };
 
   return (
@@ -25,39 +30,47 @@ const Navbar: React.FC = () => {
             Главная
           </Link>
         </Button>
-        {user ? (
+        {sessionStore.isAuthenticated ? (
           <>
             <Button asChild>
               <Link
                 to={APP_ROUTES.PROFILE.path}
                 className="hover:text-gray-500"
               >
-                Профиль
+                Профиль ({sessionStore.currentUser?.email})
               </Link>
             </Button>
             <Button
               onClick={handleLogout}
               variant="destructive"
+              disabled={logoutMutation.isPending}
               className="hover:text-gray-500 text-black"
             >
-              Выйти
+              {logoutMutation.isPending ? "Выход..." : "Выйти"}
             </Button>
           </>
         ) : (
           <>
-            <Button asChild>
-              <Link to={APP_ROUTES.LOGIN.path} className="hover:text-gray-500">
-                Вход
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link
-                to={APP_ROUTES.REGISTER.path}
-                className="hover:text-gray-500"
-              >
-                Регистрация
-              </Link>
-            </Button>
+            {!sessionStore.isSessionLoading && (
+              <>
+                <Button asChild>
+                  <Link
+                    to={APP_ROUTES.LOGIN.path}
+                    className="hover:text-gray-500"
+                  >
+                    Вход
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link
+                    to={APP_ROUTES.REGISTER.path}
+                    className="hover:text-gray-500"
+                  >
+                    Регистрация
+                  </Link>
+                </Button>
+              </>
+            )}
           </>
         )}
       </div>
@@ -65,4 +78,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export const Navbar = observer(NavbarInternal);
