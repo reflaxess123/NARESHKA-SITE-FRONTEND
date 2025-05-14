@@ -34,37 +34,42 @@ const HomePageInternal: React.FC = () => {
     <PageWrapper>
       <div className="text-1xl text-black">
         <div className="flex justify-end items-center gap-2">
-          <Button asChild>
-            <Link to={APP_ROUTES.HOME.path} className="hover:text-gray-500">
-              Главная
-            </Link>
-          </Button>
           {sessionStore.isAuthenticated ? (
             <>
-              <Button asChild>
-                <Link
-                  to={APP_ROUTES.NARESHKA.path}
+              <div className="flex flex-wrap gap-2">
+                <Button asChild>
+                  <Link
+                    to={APP_ROUTES.HOME.path}
+                    className="hover:text-gray-500"
+                  >
+                    Главная
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link
+                    to={APP_ROUTES.NARESHKA.path}
+                    className="hover:text-gray-500"
+                  >
+                    Нарешка
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link
+                    to={APP_ROUTES.PROFILE.path}
+                    className="hover:text-gray-500"
+                  >
+                    Профиль ({sessionStore.currentUser?.email})
+                  </Link>
+                </Button>
+                <Button
+                  onClick={handleLogout}
+                  variant="default"
+                  disabled={logoutMutation.isPending}
                   className="hover:text-gray-500"
                 >
-                  Нарешка
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link
-                  to={APP_ROUTES.PROFILE.path}
-                  className="hover:text-gray-500"
-                >
-                  Профиль ({sessionStore.currentUser?.email})
-                </Link>
-              </Button>
-              <Button
-                onClick={handleLogout}
-                variant="default"
-                disabled={logoutMutation.isPending}
-                className="hover:text-gray-500"
-              >
-                {logoutMutation.isPending ? "Выход..." : "Выйти"}
-              </Button>
+                  {logoutMutation.isPending ? "Выход..." : "Выйти"}
+                </Button>
+              </div>
             </>
           ) : (
             <>
