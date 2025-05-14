@@ -1,3 +1,9 @@
+export {
+  fetchCategories,
+  fetchContentBlockById,
+  fetchContentBlocks,
+  updateContentBlockProgress,
+} from "./api/contentApi";
 export { APP_ROUTES, AppRoutePath } from "./config/routes";
 export { cn } from "./lib/utils";
 export { Button, buttonVariants } from "./ui/button";

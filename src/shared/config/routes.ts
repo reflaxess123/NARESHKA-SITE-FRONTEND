@@ -4,6 +4,7 @@ export enum AppRoutePath {
   Login = "/login",
   Register = "/register",
   Profile = "/profile",
+  Nareshka = "/nareshka",
 }
 
 // Тип для одного элемента конфигурации роута
@@ -19,6 +20,7 @@ export enum AppRoute {
   Login = "LOGIN",
   Register = "REGISTER",
   Profile = "PROFILE",
+  Nareshka = "NARESHKA",
 }
 
 export const APP_ROUTES: Record<AppRoute, RouteConfigItem> = {
@@ -26,4 +28,5 @@ export const APP_ROUTES: Record<AppRoute, RouteConfigItem> = {
   [AppRoute.Login]: { path: AppRoutePath.Login },
   [AppRoute.Register]: { path: AppRoutePath.Register },
   [AppRoute.Profile]: { path: AppRoutePath.Profile },
+  [AppRoute.Nareshka]: { path: AppRoutePath.Nareshka },
 };

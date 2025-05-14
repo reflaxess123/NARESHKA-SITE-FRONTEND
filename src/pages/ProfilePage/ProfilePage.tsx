@@ -28,7 +28,7 @@ const ProfilePageInternal: React.FC = () => {
   return (
     <PageWrapper>
       <div className="flex flex-col">
-        <Button variant="outline" className="w-[100px] ml-auto p-4">
+        <Button variant="outline" className="w-[100px] mr-auto p-4">
           <Link to={APP_ROUTES.HOME.path}>Назад</Link>
         </Button>
         <div className="flex items-center justify-center pt-32">

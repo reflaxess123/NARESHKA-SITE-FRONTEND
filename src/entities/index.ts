@@ -1,3 +1,4 @@
+export * from "./content-block";
 export {
   useLoginMutation,
   useLogoutMutation,

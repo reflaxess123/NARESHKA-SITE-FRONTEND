@@ -1,6 +1,12 @@
 import { useSessionStore } from "@/entities/session";
 import { ProtectedRoute } from "@/features";
-import { HomePage, LoginPage, ProfilePage, RegisterPage } from "@/pages";
+import {
+  HomePage,
+  LoginPage,
+  NareshkaPage,
+  ProfilePage,
+  RegisterPage,
+} from "@/pages";
 import { APP_ROUTES } from "@/shared";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -40,6 +46,9 @@ const AppRoutes: React.FC = observer(() => {
         <Route path={APP_ROUTES.REGISTER.path} element={<RegisterPage />} />
         <Route path={APP_ROUTES.PROFILE.path} element={<ProtectedRoute />}>
           <Route index element={<ProfilePage />} />
+        </Route>
+        <Route path={APP_ROUTES.NARESHKA.path} element={<ProtectedRoute />}>
+          <Route index element={<NareshkaPage />} />
         </Route>
       </Route>
     </Routes>

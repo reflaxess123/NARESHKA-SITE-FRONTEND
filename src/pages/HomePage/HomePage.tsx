@@ -43,6 +43,14 @@ const HomePageInternal: React.FC = () => {
             <>
               <Button asChild>
                 <Link
+                  to={APP_ROUTES.NARESHKA.path}
+                  className="hover:text-gray-500"
+                >
+                  Нарешка
+                </Link>
+              </Button>
+              <Button asChild>
+                <Link
                   to={APP_ROUTES.PROFILE.path}
                   className="hover:text-gray-500"
                 >
