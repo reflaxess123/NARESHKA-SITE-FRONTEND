@@ -2,7 +2,6 @@ import { useSessionStore } from "@/entities/session";
 import { ProtectedRoute } from "@/features";
 import { HomePage, LoginPage, ProfilePage, RegisterPage } from "@/pages";
 import { APP_ROUTES } from "@/shared";
-import { Navbar } from "@/widgets";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import {
@@ -15,10 +14,7 @@ import {
 const Layout: React.FC = () => {
   return (
     <>
-      <Navbar />
-      <div className="container mx-auto p-4">
-        <Outlet />
-      </div>
+      <Outlet />
     </>
   );
 };

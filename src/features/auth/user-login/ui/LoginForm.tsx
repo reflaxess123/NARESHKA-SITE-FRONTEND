@@ -61,6 +61,7 @@ export const LoginForm: React.FC = observer(() => {
           disabled={loginMutation.isPending}
           required
           autoComplete="username"
+          className="border-none mt-2"
         />
       </div>
       <div>
@@ -75,6 +76,7 @@ export const LoginForm: React.FC = observer(() => {
           disabled={loginMutation.isPending}
           required
           autoComplete="current-password"
+          className="border-none mt-2"
         />
       </div>
 
@@ -93,6 +95,7 @@ export const LoginForm: React.FC = observer(() => {
         type="submit"
         disabled={loginMutation.isPending}
         className="w-full"
+        variant="default"
       >
         {loginMutation.isPending ? "Вход..." : "Войти"}
       </Button>
