@@ -82,12 +82,14 @@ export const NareshkaPage: React.FC = () => {
   // Effect to update filters state when searchParams change (e.g., browser back/forward)
   useEffect(() => {
     const filtersFromUrl = getFiltersFromSearchParams(searchParams);
-    // Сравниваем объекты фильтров, чтобы избежать ненужных обновлений
-    // Преобразуем в JSON строки для простого сравнения сложных объектов
-    if (JSON.stringify(filtersFromUrl) !== JSON.stringify(filters)) {
-      setFilters(filtersFromUrl);
-    }
-  }, [searchParams, filters]); // Добавляем filters в зависимости, чтобы избежать зацикливания, если setFilters не мемоизирован
+    setFilters((prevFilters) => {
+      // Сравниваем с предыдущим состоянием, чтобы избежать ненужных обновлений и циклов
+      if (JSON.stringify(filtersFromUrl) !== JSON.stringify(prevFilters)) {
+        return filtersFromUrl;
+      }
+      return prevFilters;
+    });
+  }, [searchParams]); // Filters удалены из зависимостей, getFiltersFromSearchParams стабильна
 
   // Update URL when filters change
   useEffect(() => {
@@ -115,7 +117,7 @@ export const NareshkaPage: React.FC = () => {
     if (newSearchParams.toString() !== searchParams.toString()) {
       setSearchParams(newSearchParams, { replace: true });
     }
-  }, [filters, setSearchParams]); // Удален searchParams из зависимостей
+  }, [filters, searchParams, setSearchParams]); // Добавлен searchParams в зависимости
 
   const handleFiltersChange = useCallback(
     (newFilters: Partial<ContentFiltersState>) => {
