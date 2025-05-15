@@ -5,6 +5,7 @@ import React from "react";
 import { AuthForm } from "@/widgets/AuthForm/AuthForm";
 import { useLocation, Navigate } from "react-router-dom";
 import { APP_ROUTES } from "@/shared";
+import { AnimatedLinesBackground } from "@/components/magicui/AnimatedLinesBackground";
 
 const HomePageInternal: React.FC = () => {
   const sessionStore = useSessionStore();
@@ -16,7 +17,8 @@ const HomePageInternal: React.FC = () => {
       initialMode = "register";
     }
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="relative flex items-center justify-center min-h-screen">
+        <AnimatedLinesBackground />
         <AuthForm initialMode={initialMode} />
       </div>
     );
@@ -30,8 +32,8 @@ const HomePageInternal: React.FC = () => {
   }
 
   return (
-    <PageWrapper>
-      <div className="flex flex-col items-center justify-center p-4 text-center pt-64">
+    <PageWrapper className="relative">
+      <div className="relative z-0 flex flex-col items-center justify-center p-4 text-center">
         <h1 className="text-4xl font-bold mb-6">
           Добро пожаловать, {sessionStore.currentUser.email}!
         </h1>
