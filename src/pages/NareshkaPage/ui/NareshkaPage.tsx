@@ -1,4 +1,3 @@
-import { Button } from "@/shared/ui/button";
 import { PageWrapper } from "@/shared/ui/PageWrapper";
 import {
   ALL_ITEMS_VALUE,
@@ -76,7 +75,7 @@ export const NareshkaPage: React.FC = () => {
     // Этот эффект должен запускаться только один раз или когда searchParams меняются извне,
     // но не должен конфликтовать с предыдущим эффектом.
     // Мы не добавляем selectedBlockId и isModalOpen в зависимости, чтобы избежать циклов.
-  }, [searchParams]);
+  }, [searchParams, selectedBlockId, isModalOpen]);
 
   // Effect to update filters state when searchParams change (e.g., browser back/forward)
   useEffect(() => {
