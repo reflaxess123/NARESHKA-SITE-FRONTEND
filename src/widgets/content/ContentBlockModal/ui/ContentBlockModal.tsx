@@ -64,15 +64,6 @@ export const ContentBlockModal: React.FC<ContentBlockModalProps> = ({
   const { mutate: updateProgress, isPending: isUpdatingProgress } =
     useUpdateContentProgress();
 
-  // console.log(
-  //   "ContentBlockModal рендер: blockId",
-  //   blockId,
-  //   "загрузка:",
-  //   isLoading,
-  //   "данные блока:",
-  //   block
-  // );
-
   if (!isOpen) return null;
 
   if (!blockId && isOpen) {
@@ -107,13 +98,13 @@ export const ContentBlockModal: React.FC<ContentBlockModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-full max-w-4xl">
+      <DialogContent className="w-full max-w-4xl dark:border-gray-800 dark:bg-gray-950">
         <DialogHeader>
           {block ? (
             <>
               <DialogTitle className="text-2xl">{block.blockTitle}</DialogTitle>
               {block.pathTitles && block.pathTitles.length > 0 && (
-                <DialogDescription className="text-sm text-gray-500">
+                <DialogDescription className="text-sm text-muted-foreground">
                   Путь: {block.pathTitles.join(" / ")}
                 </DialogDescription>
               )}
@@ -164,7 +155,7 @@ export const ContentBlockModal: React.FC<ContentBlockModalProps> = ({
                   <p className="text-sm font-semibold mb-1">
                     Код ({block.codeLanguage || "не указан"}):
                     {block.codeFoldTitle && (
-                      <span className="text-gray-600 font-normal">
+                      <span className="text-muted-foreground font-normal">
                         ({block.codeFoldTitle})
                       </span>
                     )}
@@ -193,7 +184,7 @@ export const ContentBlockModal: React.FC<ContentBlockModalProps> = ({
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline break-all"
+                          className="text-blue-600 hover:underline dark:text-blue-400 break-all"
                         >
                           {url}
                         </a>
@@ -203,7 +194,7 @@ export const ContentBlockModal: React.FC<ContentBlockModalProps> = ({
                 </div>
               )}
 
-              <div className="text-xs text-gray-500 border-t pt-4 mt-auto">
+              <div className="text-xs text-muted-foreground border-t pt-4 mt-auto">
                 <p>
                   <strong>ID Файла:</strong> {block.fileId}
                 </p>

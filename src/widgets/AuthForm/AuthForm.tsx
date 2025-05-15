@@ -64,7 +64,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
   };
 
   return (
-    <Card className="relative w-[350px] overflow-hidden">
+    <Card className="relative w-[350px] overflow-hidden dark:border-gray-800 dark:bg-gray-950">
       <CardHeader>
         <CardTitle>{mode === "login" ? "Login" : "Register"}</CardTitle>
         <CardDescription>
@@ -85,6 +85,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
+                className="dark:border-gray-800 dark:bg-gray-950"
               />
             </div>
             <div className="flex flex-col space-y-1.5">
@@ -96,6 +97,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
+                className="dark:border-gray-800 dark:bg-gray-950"
               />
             </div>
             {mode === "register" && (

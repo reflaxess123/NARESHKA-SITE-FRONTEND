@@ -75,7 +75,7 @@ export const NareshkaPage: React.FC = () => {
     // Этот эффект должен запускаться только один раз или когда searchParams меняются извне,
     // но не должен конфликтовать с предыдущим эффектом.
     // Мы не добавляем selectedBlockId и isModalOpen в зависимости, чтобы избежать циклов.
-  }, [searchParams, selectedBlockId, isModalOpen]);
+  }, [searchParams]); // Удалены selectedBlockId и isModalOpen из зависимостей
 
   // Effect to update filters state when searchParams change (e.g., browser back/forward)
   useEffect(() => {
@@ -159,9 +159,11 @@ export const NareshkaPage: React.FC = () => {
   return (
     <PageWrapper>
       <div className="mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">Нарешка</h1>
+        <h1 className="text-3xl font-bold text-center mb-8 text-foreground">
+          Нарешка
+        </h1>
 
-        <div className="mb-8">
+        <div className="mb-8 bg-card rounded-xl p-6 shadow-sm">
           <ContentFilters
             initialFilters={filters}
             onFiltersChange={handleFiltersChange}

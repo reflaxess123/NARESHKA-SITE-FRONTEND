@@ -6,6 +6,7 @@ import { APP_ROUTES, PageWrapper } from "@/shared";
 import { Sidebar, SidebarBody, SidebarLink } from "@/shared/ui/sidebar";
 import { Home, User, LogOut, Settings } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher/ThemeSwitcher";
 
 const AppLayoutInternal: React.FC = () => {
   const sessionStore = useSessionStore();
@@ -76,38 +77,81 @@ const AppLayoutInternal: React.FC = () => {
   return (
     <div
       className={cn(
-        "flex flex-col md:flex-row bg-gray-200 dark:bg-neutral-900 w-full flex-1 min-h-screen"
+        "flex flex-col md:flex-row w-full flex-1 min-h-screen",
+        "bg-background"
       )}
     >
-      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} animate={true}>
-        <SidebarBody className="flex-col justify-between">
-          <div className="flex-grow overflow-y-auto overflow-x-hidden">
-            <div className="mt-8 flex flex-col gap-2 px-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
+      {/* Обертка для сайдбара и переключателя темы */}
+      <div className="relative hidden md:flex">
+        {" "}
+        {/* Используем md:flex чтобы соответствовать DesktopSidebar */}
+        <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} animate={true}>
+          <SidebarBody className="flex-col justify-between">
+            <div className="flex-grow overflow-y-auto overflow-x-hidden">
+              <div className="mt-8 flex flex-col gap-2 px-2">
+                {links.map((link, idx) => (
+                  <SidebarLink key={idx} link={link} />
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-2 px-2 pb-2">
-            <SidebarLink link={profileLinkData} />
-            <SidebarLink
-              link={logoutLinkData}
-              onClick={(e: React.MouseEvent) => {
-                e.preventDefault();
-                handleLogout();
-              }}
-              // Добавляем классы для визуального отображения состояния disabled
-              className={
-                logoutMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
-              }
-            />
-          </div>
-        </SidebarBody>
-      </Sidebar>
-      <div className="flex-1 flex flex-col overflow-y-auto p-2 md:p-10">
-        <PageWrapper>
-          <Outlet />
-        </PageWrapper>
+            <div className="flex flex-col gap-2 px-2 pb-2">
+              <SidebarLink link={profileLinkData} />
+              <SidebarLink
+                link={logoutLinkData}
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  handleLogout();
+                }}
+                className={
+                  logoutMutation.isPending
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }
+              />
+            </div>
+          </SidebarBody>
+        </Sidebar>
+        {/* Позиционируем ThemeSwitcher внизу области сайдбара */}
+      </div>
+
+      {/* Мобильный сайдбар */}
+      <div className="md:hidden">
+        <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} animate={true}>
+          <SidebarBody className="flex-col justify-between">
+            {/* Добавляем содержимое для мобильного сайдбара */}
+            <div className="flex-grow overflow-y-auto overflow-x-hidden">
+              <div className="mt-8 flex flex-col gap-2 px-2">
+                {links.map((link, idx) => (
+                  <SidebarLink key={`mobile-${idx}`} link={link} />
+                ))}
+                <SidebarLink link={profileLinkData} />
+                <SidebarLink
+                  link={logoutLinkData}
+                  onClick={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    handleLogout();
+                  }}
+                  className={
+                    logoutMutation.isPending
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }
+                />
+              </div>
+            </div>
+          </SidebarBody>
+        </Sidebar>
+      </div>
+
+      <div className="flex-1 flex flex-col overflow-y-auto relative">
+        <div className="hidden md:block md:fixed top-4 right-4 z-50">
+          <ThemeSwitcher />
+        </div>
+        <div className="p-2 md:p-10 flex-grow">
+          <PageWrapper>
+            <Outlet />
+          </PageWrapper>
+        </div>
       </div>
     </div>
   );

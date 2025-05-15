@@ -5,7 +5,7 @@ import React from "react";
 import { AuthForm } from "@/widgets/AuthForm/AuthForm";
 import { useLocation, Navigate } from "react-router-dom";
 import { APP_ROUTES } from "@/shared";
-import { AnimatedLinesBackground } from "@/components/magicui/AnimatedLinesBackground";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher/ThemeSwitcher";
 
 const HomePageInternal: React.FC = () => {
   const sessionStore = useSessionStore();
@@ -17,8 +17,10 @@ const HomePageInternal: React.FC = () => {
       initialMode = "register";
     }
     return (
-      <div className="relative flex items-center justify-center min-h-screen">
-        <AnimatedLinesBackground />
+      <div className="relative flex items-center justify-center min-h-screen bg-background">
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeSwitcher />
+        </div>
         <AuthForm initialMode={initialMode} />
       </div>
     );
@@ -34,10 +36,10 @@ const HomePageInternal: React.FC = () => {
   return (
     <PageWrapper className="relative">
       <div className="relative z-0 flex flex-col items-center justify-center p-4 text-center">
-        <h1 className="text-4xl font-bold mb-6">
+        <h1 className="text-4xl font-bold mb-6 text-foreground">
           Добро пожаловать, {sessionStore.currentUser.email}!
         </h1>
-        <p className="text-lg mb-8">
+        <p className="text-lg mb-8 text-foreground">
           Вы успешно вошли в систему. Ваш профиль и опция выхода доступны в
           панели навигации.
         </p>

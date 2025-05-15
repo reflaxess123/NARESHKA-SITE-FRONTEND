@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryProvider } from "./providers/QueryProvider";
 import { StoreProvider } from "./providers/StoreProvider";
+import { ThemeProvider } from "./providers/ThemeProvider";
 import "./styles/index.css"; // Путь к стилям из src/app/styles/
 import App from "./App";
 
@@ -11,7 +12,9 @@ if (rootElement) {
     <React.StrictMode>
       <QueryProvider>
         <StoreProvider>
-          <App />
+          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+            <App />
+          </ThemeProvider>
         </StoreProvider>
       </QueryProvider>
     </React.StrictMode>

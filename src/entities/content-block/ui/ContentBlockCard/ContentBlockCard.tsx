@@ -14,6 +14,7 @@ import React from "react";
 import { DiJavascript1, DiReact } from "react-icons/di";
 import { SiTypescript } from "react-icons/si";
 import { type ContentBlock, type ContentBlockFilters } from "../../model/types";
+import { cn } from "@/shared/lib/utils";
 
 interface ContentBlockCardProps {
   block: ContentBlock;
@@ -62,37 +63,37 @@ export const ContentBlockCard: React.FC<ContentBlockCardProps> = ({
 
   return (
     <Card
-      className={
-        "cursor-pointer hover:shadow-lg transition-shadow duration-200"
-      }
+      className={cn(
+        "cursor-pointer hover:shadow-lg transition-shadow duration-200 dark:border-neutral-800"
+      )}
       onClick={handleCardClick}
     >
       <CardHeader>
         <div className="flex items-center">
           {IconComponent && (
-            <IconComponent className="h-6 w-6 mr-2 text-gray-600" />
+            <IconComponent className="h-6 w-6 mr-2 text-muted-foreground" />
           )}
           <CardTitle className="text-lg">{block.blockTitle}</CardTitle>
         </div>
         {block.pathTitles && block.pathTitles.length > 0 && (
-          <CardDescription className="text-xs text-gray-500 mt-1">
+          <CardDescription className="text-xs mt-1 text-muted-foreground">
             {block.pathTitles.join(" / ")}
           </CardDescription>
         )}
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-gray-700 mb-2">
+        <p className="text-sm mb-2 text-foreground">
           {getShortTextContent(block.textContent)}
         </p>
         {block.codeContent && (
-          <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-            <p className="font-semibold">
+          <div className="mt-2 p-2 bg-muted rounded text-xs">
+            <p className="font-semibold text-muted-foreground">
               Есть блок кода ({block.codeLanguage || "не указан"})
             </p>
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex flex-col items-start text-xs text-gray-500">
+      <CardFooter className="flex flex-col items-start text-xs text-muted-foreground">
         <div className="flex justify-between items-center w-full mb-2">
           <div>
             <Badge variant="outline" className="mr-2">
@@ -100,7 +101,9 @@ export const ContentBlockCard: React.FC<ContentBlockCardProps> = ({
             </Badge>
             <Badge variant="secondary">{block.file.subCategory}</Badge>
           </div>
-          <span className="text-gray-400">ID: {block.id.slice(0, 6)}..</span>
+          <span className="text-muted-foreground">
+            ID: {block.id.slice(0, 6)}..
+          </span>
         </div>
         <div className="flex items-center justify-between w-full mt-1 pt-2 border-t">
           <div className="flex items-center">
@@ -113,7 +116,9 @@ export const ContentBlockCard: React.FC<ContentBlockCardProps> = ({
               )
             )}
             {(block.currentUserSolvedCount || 0) === 0 && (
-              <span className="text-xs text-gray-400 italic">Не решено</span>
+              <span className="text-xs italic text-muted-foreground">
+                Не решено
+              </span>
             )}
           </div>
           <div className="flex items-center space-x-1">

@@ -127,12 +127,12 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
   };
 
   return (
-    <div className="p-4 space-y-4 border rounded-md bg-white dark:bg-neutral-800">
+    <div className="p-4 space-y-4 text-foreground">
       <Input
         placeholder="Поиск..."
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        className="max-w-sm"
+        className="max-w-sm dark:border-neutral-800 border-neutral-200"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
         <Select
@@ -140,10 +140,10 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
           onValueChange={setMainCategory}
           disabled={isLoadingCategories}
         >
-          <SelectTrigger>
+          <SelectTrigger className="dark:border-neutral-800 border-neutral-200">
             <SelectValue placeholder="Основная категория" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="dark:border-neutral-800 border-neutral-200">
             <SelectItem value={ALL_ITEMS_VALUE}>Все основные</SelectItem>
             {categoriesData?.map((cat: Category) => (
               <SelectItem key={cat.name} value={cat.name}>
@@ -160,10 +160,10 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
             mainCategory === ALL_ITEMS_VALUE || subCategoryOptions.length === 0
           }
         >
-          <SelectTrigger>
+          <SelectTrigger className="dark:border-neutral-800 border-neutral-200 border-2">
             <SelectValue placeholder="Подкатегория" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="dark:border-neutral-800 border-neutral-200">
             <SelectItem value={ALL_ITEMS_VALUE}>Все подкатегории</SelectItem>
             {subCategoryOptions.map((opt) => (
               <SelectItem key={opt.value} value={opt.value}>
@@ -174,10 +174,10 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
         </Select>
 
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger>
+          <SelectTrigger className="dark:border-neutral-800 border-neutral-200">
             <SelectValue placeholder="Сортировать по" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="dark:border-neutral-800 border-neutral-200">
             {SORT_OPTIONS.map((opt) => (
               <SelectItem key={opt.value} value={opt.value}>
                 {opt.label}
@@ -190,10 +190,10 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
           value={sortOrder}
           onValueChange={(value) => setSortOrder(value as "asc" | "desc")}
         >
-          <SelectTrigger>
+          <SelectTrigger className="dark:border-neutral-800 border-neutral-200">
             <SelectValue placeholder="Направление" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="dark:border-neutral-800">
             {SORT_ORDER_OPTIONS.map((opt) => (
               <SelectItem key={opt.value} value={opt.value}>
                 {opt.label}
@@ -202,7 +202,7 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
           </SelectContent>
         </Select>
       </div>
-      <Button onClick={handleResetFilters} variant="outline" size="sm">
+      <Button onClick={handleResetFilters} variant="secondary" size="sm">
         <X className="mr-2 h-4 w-4" /> Сбросить все фильтры
       </Button>
     </div>
