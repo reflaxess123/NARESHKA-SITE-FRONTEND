@@ -127,7 +127,7 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
   };
 
   return (
-    <div className="p-4 space-y-4 border rounded-md">
+    <div className="p-4 space-y-4 border rounded-md bg-white dark:bg-neutral-800">
       <Input
         placeholder="Поиск..."
         value={searchText}

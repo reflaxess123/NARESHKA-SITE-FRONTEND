@@ -8,7 +8,7 @@ import {
   ContentFiltersState,
 } from "@/widgets/content";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const DEFAULT_PAGE_LIMIT = 10; // Определим константу для лимита
 
@@ -47,7 +47,6 @@ export const NareshkaPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(
     () => !!searchParams.get("modalBlockId") // Инициализация isModalOpen из URL
   );
-  const navigate = useNavigate();
 
   // Effect to synchronize selectedBlockId and isModalOpen with URL (modalBlockId)
   useEffect(() => {
@@ -161,16 +160,7 @@ export const NareshkaPage: React.FC = () => {
   return (
     <PageWrapper>
       <div className="mx-auto">
-        <div className="flex items-center mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate(-1)}
-            className="w-[100px] p-4 mr-4"
-          >
-            Назад
-          </Button>
-          <h1 className="text-3xl font-bold text-center flex-grow">Нарешка</h1>
-        </div>
+        <h1 className="text-3xl font-bold text-center mb-8">Нарешка</h1>
 
         <div className="mb-8">
           <ContentFilters

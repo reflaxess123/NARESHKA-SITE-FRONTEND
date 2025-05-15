@@ -1,6 +1,5 @@
 import { useSessionStore } from "@/entities/session";
-import { APP_ROUTES, PageWrapper } from "@/shared";
-import { Button } from "@/shared/ui/button";
+import { PageWrapper } from "@/shared";
 import {
   Card,
   CardContent,
@@ -10,7 +9,6 @@ import {
 } from "@/shared/ui/card";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link } from "react-router-dom";
 
 const ProfilePageInternal: React.FC = () => {
   const sessionStore = useSessionStore();
@@ -27,35 +25,30 @@ const ProfilePageInternal: React.FC = () => {
 
   return (
     <PageWrapper>
-      <div className="flex flex-col">
-        <Button variant="outline" className="w-[100px] mr-auto p-4">
-          <Link to={APP_ROUTES.HOME.path}>Назад</Link>
-        </Button>
-        <div className="flex items-center justify-center pt-32">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle className="text-2xl">Профиль пользователя</CardTitle>
-              <CardDescription>
-                Это ваша защищенная страница профиля.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="space-y-2">
-                <p>
-                  <span className="font-semibold">ID:</span> {currentUser.id}
-                </p>
-                <p>
-                  <span className="font-semibold">Email:</span>{" "}
-                  {currentUser.email}
-                </p>
-                <p>
-                  <span className="font-semibold">Дата регистрации:</span>{" "}
-                  {new Date(currentUser.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="flex flex-col items-center justify-center flex-1 min-h-full">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Профиль пользователя</CardTitle>
+            <CardDescription>
+              Это ваша защищенная страница профиля.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="space-y-2">
+              <p>
+                <span className="font-semibold">ID:</span> {currentUser.id}
+              </p>
+              <p>
+                <span className="font-semibold">Email:</span>{" "}
+                {currentUser.email}
+              </p>
+              <p>
+                <span className="font-semibold">Дата регистрации:</span>{" "}
+                {new Date(currentUser.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </PageWrapper>
   );

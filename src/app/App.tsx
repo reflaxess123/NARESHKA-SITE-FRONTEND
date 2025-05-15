@@ -10,20 +10,8 @@ import {
 import { APP_ROUTES } from "@/shared";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import {
-  Outlet,
-  Route,
-  BrowserRouter as Router,
-  Routes,
-} from "react-router-dom";
-
-const Layout: React.FC = () => {
-  return (
-    <>
-      <Outlet />
-    </>
-  );
-};
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { AppLayout } from "@/widgets/Layout/AppLayout";
 
 const AppRoutes: React.FC = observer(() => {
   const sessionStore = useSessionStore();
@@ -38,19 +26,15 @@ const AppRoutes: React.FC = observer(() => {
 
   return (
     <Routes>
-      <Route element={<Layout />}>
-        <Route path={APP_ROUTES.HOME.path} element={<ProtectedRoute />}>
-          <Route index element={<HomePage />} />
-        </Route>
-        <Route path={APP_ROUTES.LOGIN.path} element={<LoginPage />} />
-        <Route path={APP_ROUTES.REGISTER.path} element={<RegisterPage />} />
-        <Route path={APP_ROUTES.PROFILE.path} element={<ProtectedRoute />}>
-          <Route index element={<ProfilePage />} />
-        </Route>
-        <Route path={APP_ROUTES.NARESHKA.path} element={<ProtectedRoute />}>
-          <Route index element={<NareshkaPage />} />
+      <Route element={<AppLayout />}>
+        <Route element={<ProtectedRoute />}>
+          <Route path={APP_ROUTES.HOME.path} element={<HomePage />} />
+          <Route path={APP_ROUTES.PROFILE.path} element={<ProfilePage />} />
+          <Route path={APP_ROUTES.NARESHKA.path} element={<NareshkaPage />} />
         </Route>
       </Route>
+      <Route path={APP_ROUTES.LOGIN.path} element={<LoginPage />} />
+      <Route path={APP_ROUTES.REGISTER.path} element={<RegisterPage />} />
     </Routes>
   );
 });

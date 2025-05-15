@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { App } from "."; // Путь к App из src/app/index.ts
 import { QueryProvider } from "./providers/QueryProvider";
 import { StoreProvider } from "./providers/StoreProvider";
 import "./styles/index.css"; // Путь к стилям из src/app/styles/
+import App from "./App";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
