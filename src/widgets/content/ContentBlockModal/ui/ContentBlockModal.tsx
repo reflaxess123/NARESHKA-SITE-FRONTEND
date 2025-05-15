@@ -2,19 +2,20 @@ import {
   useContentBlockDetails,
   useUpdateContentProgress,
 } from "@/features/content";
-import { Badge } from "@/shared/ui/badge";
-import { Button } from "@/shared/ui/button";
+import { Badge, Button, Modal, Skeleton } from "@/shared/ui";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/shared/ui/dialog";
-import { ScrollArea } from "@/shared/ui/scroll-area";
-import { Skeleton } from "@/shared/ui/skeleton";
+  ActionIcon,
+  Text,
+  Title,
+  Group,
+  Stack,
+  Alert,
+  Box,
+  Divider,
+  ScrollAreaAutosize,
+  TypographyStylesProvider,
+  VisuallyHidden,
+} from "@mantine/core";
 import React from "react";
 import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
 // Выберите стиль по вкусу. Например, atomOneDark. Полный список:
@@ -23,8 +24,7 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 // Языки, которые нужно поддерживать. Можно добавлять по мере необходимости.
 // Базовые языки (markup, css, clike, javascript) обычно включены по умолчанию или с PrismAsyncLight
 // Для других, например, jsx, typescript, python, json, bash и т.д.:
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, AlertCircle } from "lucide-react";
 import bash from "react-syntax-highlighter/dist/esm/languages/prism/bash";
 import json from "react-syntax-highlighter/dist/esm/languages/prism/json";
 import jsx from "react-syntax-highlighter/dist/esm/languages/prism/jsx";
@@ -81,21 +81,22 @@ export const ContentBlockModal: React.FC<ContentBlockModalProps> = ({
 
   if (isError) {
     return (
-      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Ошибка</DialogTitle>
-          </DialogHeader>
-          <p className="text-red-500 py-4">
-            Не удалось загрузить детали блока: {error?.message}
-          </p>
-          <DialogFooter>
-            <Button onClick={onClose} variant="outline">
-              Закрыть
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Modal opened={isOpen} onClose={onClose} title="Ошибка" centered>
+        <Alert
+          icon={<AlertCircle size={16} />}
+          title="Ошибка загрузки"
+          color="red"
+          variant="light"
+          mb="md"
+        >
+          Не удалось загрузить детали блока: {error?.message}
+        </Alert>
+        <Group justify="flex-end">
+          <Button onClick={onClose} variant="outline">
+            Закрыть
+          </Button>
+        </Group>
+      </Modal>
     );
   }
 
@@ -105,171 +106,186 @@ export const ContentBlockModal: React.FC<ContentBlockModalProps> = ({
     }
   };
 
+  // Заголовок модального окна
+  const modalTitle = block
+    ? block.blockTitle
+    : isLoading
+      ? "Загрузка..."
+      : "Информация о блоке";
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-full max-w-4xl">
-        <DialogHeader>
-          {block ? (
-            <>
-              <DialogTitle className="text-2xl">{block.blockTitle}</DialogTitle>
-              {block.pathTitles && block.pathTitles.length > 0 && (
-                <DialogDescription className="text-sm text-gray-500">
-                  Путь: {block.pathTitles.join(" / ")}
-                </DialogDescription>
-              )}
-            </>
-          ) : (
-            <>
-              <VisuallyHidden>
-                <DialogTitle>
-                  {isLoading
-                    ? "Загрузка информации о блоке"
-                    : "Информация о блоке"}
-                </DialogTitle>
-              </VisuallyHidden>
-              {isLoading && (
-                <>
-                  <Skeleton className="h-8 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-1/2" />
-                </>
-              )}
-            </>
-          )}
-        </DialogHeader>
+    <Modal
+      opened={isOpen}
+      onClose={onClose}
+      title={modalTitle}
+      size="4xl"
+      centered
+      scrollAreaComponent={ScrollAreaAutosize}
+    >
+      {isLoading && !block && (
+        <VisuallyHidden>
+          <Title order={2}>Загрузка информации о блоке</Title>
+        </VisuallyHidden>
+      )}
+      {block && block.pathTitles && block.pathTitles.length > 0 && (
+        <Text size="sm" c="dimmed" mb="sm">
+          Путь: {block.pathTitles.join(" / ")}
+        </Text>
+      )}
 
-        <ScrollArea className="max-h-[calc(80vh-150px)] p-1 pr-4 mt-4 mb-4">
-          {isLoading && !block ? (
-            <div className="space-y-4 mt-4">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
-              <Skeleton className="h-40 w-full mt-4" />
-              <Skeleton className="h-4 w-1/3 mt-4" />
-              <div className="flex flex-wrap gap-2 mt-2">
-                <Skeleton className="h-6 w-24" />
-                <Skeleton className="h-6 w-20" />
-              </div>
-            </div>
-          ) : block ? (
-            <>
-              {block.textContent && (
-                <div
-                  className="prose prose-sm dark:prose-invert max-w-none mb-6"
-                  dangerouslySetInnerHTML={{ __html: block.textContent }}
-                />
-              )}
+      <Box
+        style={{
+          maxHeight: "calc(80vh - 160px)",
+          marginTop: "var(--mantine-spacing-md)",
+          marginBottom: "var(--mantine-spacing-md)",
+        }}
+      >
+        {isLoading && !block ? (
+          <Stack gap="md" mt="md">
+            <Skeleton height={20} width="75%" mb="xs" />
+            <Skeleton height={16} width="50%" />
+            <Divider my="sm" />
+            <Skeleton height={16} />
+            <Skeleton height={16} />
+            <Skeleton height={16} width="80%" />
+            <Skeleton height={160} mt="md" />
+            <Skeleton height={16} width="33%" mt="md" />
+            <Group mt="sm">
+              <Skeleton height={24} width={96} />
+              <Skeleton height={24} width={80} />
+            </Group>
+          </Stack>
+        ) : block ? (
+          <Stack gap="lg">
+            {block.textContent && (
+              <TypographyStylesProvider>
+                <Box dangerouslySetInnerHTML={{ __html: block.textContent }} />
+              </TypographyStylesProvider>
+            )}
 
-              {block.codeContent && (
-                <div className="mb-6">
-                  <p className="text-sm font-semibold mb-1">
-                    Код ({block.codeLanguage || "не указан"}):
-                    {block.codeFoldTitle && (
-                      <span className="text-gray-600 font-normal">
-                        ({block.codeFoldTitle})
-                      </span>
-                    )}
-                  </p>
-                  <SyntaxHighlighter
-                    language={block.codeLanguage || "text"}
-                    style={atomDark}
-                    showLineNumbers
-                    wrapLines
-                    className="rounded-md !p-4 !text-sm"
+            {block.codeContent && (
+              <Box>
+                <Text size="sm" fw={600} mb={4}>
+                  Код ({block.codeLanguage || "не указан"}):
+                  {block.codeFoldTitle && (
+                    <Text span c="dimmed" fw={400}>
+                      ({block.codeFoldTitle})
+                    </Text>
+                  )}
+                </Text>
+                <SyntaxHighlighter
+                  language={block.codeLanguage || "text"}
+                  style={atomDark}
+                  showLineNumbers
+                  wrapLines
+                  customStyle={{
+                    borderRadius: "var(--mantine-radius-md)",
+                    padding: "var(--mantine-spacing-md)",
+                    fontSize: "var(--mantine-font-size-sm)",
+                  }}
+                >
+                  {String(block.codeContent)}
+                </SyntaxHighlighter>
+              </Box>
+            )}
+
+            {block.extractedUrls && block.extractedUrls.length > 0 && (
+              <Box>
+                <Title order={4} mb="sm">
+                  Извлеченные URL:
+                </Title>
+                <Stack
+                  component="ul"
+                  gap="xs"
+                  style={{
+                    listStyle: "disc",
+                    paddingLeft: "var(--mantine-spacing-lg)",
+                  }}
+                >
+                  {block.extractedUrls.map((url, index) => (
+                    <li key={index}>
+                      <Text
+                        size="sm"
+                        component="a"
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="link"
+                      >
+                        {url}
+                      </Text>
+                    </li>
+                  ))}
+                </Stack>
+              </Box>
+            )}
+            <Divider />
+            <Box fz="xs" c="dimmed">
+              <Text>
+                <strong>ID Файла:</strong> {block.fileId}
+              </Text>
+              <Text>
+                <strong>Путь к файлу (WebDAV):</strong> {block.file.webdavPath}
+              </Text>
+              <Group gap="xs" my={4}>
+                <strong>Категории:</strong>
+                <Badge variant="outline">{block.file.mainCategory}</Badge> /
+                <Badge variant="light">{block.file.subCategory}</Badge>
+              </Group>
+              <Divider my="sm" />
+              <Group align="center">
+                <Text fw={500}>Решено раз:</Text>
+                <Text fw={700} mr="sm">
+                  {block.currentUserSolvedCount || 0}
+                </Text>
+                <ActionIcon.Group>
+                  <ActionIcon
+                    size="md"
+                    variant="default"
+                    onClick={() => handleProgressChange("decrement")}
+                    disabled={
+                      isUpdatingProgress ||
+                      (block.currentUserSolvedCount || 0) === 0
+                    }
+                    aria-label="Уменьшить прогресс"
                   >
-                    {String(block.codeContent)}
-                  </SyntaxHighlighter>
-                </div>
-              )}
-
-              {block.extractedUrls && block.extractedUrls.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="text-md font-semibold mb-2">
-                    Извлеченные URL:
-                  </h4>
-                  <ul className="list-disc list-inside space-y-1">
-                    {block.extractedUrls.map((url, index) => (
-                      <li key={index} className="text-sm">
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline break-all"
-                        >
-                          {url}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              <div className="text-xs text-gray-500 border-t pt-4 mt-auto">
-                <p>
-                  <strong>ID Файла:</strong> {block.fileId}
-                </p>
-                <p>
-                  <strong>Путь к файлу (WebDAV):</strong>{" "}
-                  {block.file.webdavPath}
-                </p>
-                <div>
-                  <strong>Категории:</strong>{" "}
-                  <Badge variant="outline">{block.file.mainCategory}</Badge> /{" "}
-                  <Badge variant="secondary">{block.file.subCategory}</Badge>
-                </div>
-                <div className="mt-2 pt-2 border-t">
-                  <strong className="mr-2">Решено раз:</strong>
-                  <span className="font-semibold mr-2">
-                    {block.currentUserSolvedCount || 0}
-                  </span>
-                  <div className="inline-flex items-center space-x-1 ml-2">
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="h-7 w-7 p-0"
-                      onClick={() => handleProgressChange("decrement")}
-                      disabled={
-                        isUpdatingProgress ||
-                        (block.currentUserSolvedCount || 0) === 0
-                      }
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="h-7 w-7 p-0"
-                      onClick={() => handleProgressChange("increment")}
-                      disabled={isUpdatingProgress}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <p className="mt-2">
-                  <strong>Создано:</strong>{" "}
-                  {new Date(block.createdAt).toLocaleString()}
-                </p>
-                <p>
-                  <strong>Обновлено:</strong>{" "}
-                  {new Date(block.updatedAt).toLocaleString()}
-                </p>
-              </div>
-            </>
-          ) : null}
-        </ScrollArea>
-
-        <DialogFooter className="mt-4">
-          {isLoading && !block ? (
-            <Skeleton className="h-10 w-24" />
-          ) : (
-            <DialogClose asChild>
-              <Button onClick={onClose} variant="outline">
-                Закрыть
-              </Button>
-            </DialogClose>
-          )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+                    <Minus size={16} />
+                  </ActionIcon>
+                  <ActionIcon
+                    size="md"
+                    variant="default"
+                    onClick={() => handleProgressChange("increment")}
+                    disabled={isUpdatingProgress}
+                    aria-label="Увеличить прогресс"
+                  >
+                    <Plus size={16} />
+                  </ActionIcon>
+                </ActionIcon.Group>
+              </Group>
+              <Text mt="sm">
+                <strong>Создано:</strong>{" "}
+                {new Date(block.createdAt).toLocaleString()}
+              </Text>
+              <Text>
+                <strong>Обновлено:</strong>{" "}
+                {new Date(block.updatedAt).toLocaleString()}
+              </Text>
+            </Box>
+          </Stack>
+        ) : null}
+      </Box>
+      {!isLoading && block && (
+        <Group justify="flex-end" mt="md">
+          <Button onClick={onClose} variant="outline">
+            Закрыть
+          </Button>
+        </Group>
+      )}
+      {isLoading && !block && (
+        <Group justify="flex-end" mt="md">
+          <Skeleton height={36} width={100} />
+        </Group>
+      )}
+    </Modal>
   );
 };

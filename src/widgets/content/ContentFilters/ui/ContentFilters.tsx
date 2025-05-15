@@ -1,16 +1,16 @@
 import { Category } from "@/entities/content-block";
 import { useCategories } from "@/features/content";
-import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Button } from "@/shared/ui";
 import { X } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
+import {
+  SimpleGrid,
+  Paper,
+  TextInput,
+  Select,
+  Group,
+  Stack,
+} from "@mantine/core";
 
 export const ALL_ITEMS_VALUE = "__ALL_ITEMS__"; // Специальное значение для "всех элементов"
 
@@ -108,14 +108,29 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
     }
   }, [mainCategory, subCategory, categoriesData]);
 
+  const mainCategoryOptions = useMemo(
+    () => [
+      { value: ALL_ITEMS_VALUE, label: "Все основные" },
+      ...(categoriesData?.map((cat: Category) => ({
+        value: cat.name,
+        label: cat.name,
+      })) || []),
+    ],
+    [categoriesData]
+  );
+
   const subCategoryOptions = useMemo(() => {
-    if (mainCategory === ALL_ITEMS_VALUE || !categoriesData) return [];
+    if (mainCategory === ALL_ITEMS_VALUE || !categoriesData)
+      return [{ value: ALL_ITEMS_VALUE, label: "Все подкатегории" }];
     const selectedMain = categoriesData.find(
       (cat: Category) => cat.name === mainCategory
     );
-    return selectedMain
-      ? selectedMain.subCategories.map((sub) => ({ value: sub, label: sub }))
-      : [];
+    return [
+      { value: ALL_ITEMS_VALUE, label: "Все подкатегории" },
+      ...(selectedMain
+        ? selectedMain.subCategories.map((sub) => ({ value: sub, label: sub }))
+        : []),
+    ];
   }, [mainCategory, categoriesData]);
 
   const handleResetFilters = () => {
@@ -127,84 +142,65 @@ export const ContentFilters: React.FC<ContentFiltersProps> = ({
   };
 
   return (
-    <div className="p-4 space-y-4 border rounded-md">
-      <Input
-        placeholder="Поиск..."
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        className="max-w-sm"
-      />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-        <Select
-          value={mainCategory}
-          onValueChange={setMainCategory}
-          disabled={isLoadingCategories}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Основная категория" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_ITEMS_VALUE}>Все основные</SelectItem>
-            {categoriesData?.map((cat: Category) => (
-              <SelectItem key={cat.name} value={cat.name}>
-                {cat.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={subCategory}
-          onValueChange={setSubCategory}
-          disabled={
-            mainCategory === ALL_ITEMS_VALUE || subCategoryOptions.length === 0
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Подкатегория" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_ITEMS_VALUE}>Все подкатегории</SelectItem>
-            {subCategoryOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger>
-            <SelectValue placeholder="Сортировать по" />
-          </SelectTrigger>
-          <SelectContent>
-            {SORT_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={sortOrder}
-          onValueChange={(value) => setSortOrder(value as "asc" | "desc")}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Направление" />
-          </SelectTrigger>
-          <SelectContent>
-            {SORT_ORDER_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <Button onClick={handleResetFilters} variant="outline" size="sm">
-        <X className="mr-2 h-4 w-4" /> Сбросить все фильтры
-      </Button>
-    </div>
+    <Paper shadow="xs" p="md" withBorder>
+      <Stack gap="md">
+        <TextInput
+          placeholder="Поиск..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ maxWidth: "400px" }}
+        />
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
+          <Select
+            label="Основная категория"
+            placeholder="Выберите категорию"
+            data={mainCategoryOptions}
+            value={mainCategory}
+            onChange={(value) => setMainCategory(value || ALL_ITEMS_VALUE)}
+            disabled={isLoadingCategories}
+            clearable
+          />
+          <Select
+            label="Подкатегория"
+            placeholder="Выберите подкатегорию"
+            data={subCategoryOptions}
+            value={subCategory}
+            onChange={(value) => setSubCategory(value || ALL_ITEMS_VALUE)}
+            disabled={
+              mainCategory === ALL_ITEMS_VALUE || subCategoryOptions.length <= 1
+            }
+            clearable
+          />
+          <Select
+            label="Сортировать по"
+            placeholder="Выберите поле сортировки"
+            data={SORT_OPTIONS}
+            value={sortBy}
+            onChange={(value) => setSortBy(value || "orderInFile")}
+            clearable
+          />
+          <Select
+            label="Направление"
+            placeholder="Выберите направление"
+            data={SORT_ORDER_OPTIONS}
+            value={sortOrder}
+            onChange={(value) =>
+              setSortOrder((value as "asc" | "desc") || "asc")
+            }
+            clearable
+          />
+        </SimpleGrid>
+        <Group justify="flex-start">
+          <Button
+            onClick={handleResetFilters}
+            variant="light"
+            size="sm"
+            leftSection={<X size={16} />}
+          >
+            Сбросить все фильтры
+          </Button>
+        </Group>
+      </Stack>
+    </Paper>
   );
 };

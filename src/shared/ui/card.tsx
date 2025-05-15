@@ -1,92 +1,31 @@
-import * as React from "react";
+import {
+  Card as MantineCard,
+  CardProps as MantineCardProps,
+  CardSectionProps as MantineCardSectionProps,
+  ElementProps,
+} from "@mantine/core";
+import React from "react";
 
-import { cn } from "@/shared";
+// Добавляем ElementProps для поддержки onClick и других HTML атрибутов
+export interface CardProps
+  extends MantineCardProps,
+    ElementProps<"div", keyof MantineCardProps> {}
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className
-      )}
-      {...props}
-    />
-  );
-}
+export interface CustomCardSectionProps extends MantineCardSectionProps {
+  children?: React.ReactNode;
+} // Для единообразия, если понадобится кастомизация
 
-function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-        className
-      )}
-      {...props}
-    />
-  );
-}
+const CardRoot: React.FC<CardProps> = (props) => {
+  return <MantineCard {...props} />;
+};
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
-      {...props}
-    />
-  );
-}
+const CardSection: React.FC<CustomCardSectionProps> = (props) => {
+  return <MantineCard.Section {...props} />;
+};
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-description"
-      className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
-  );
-}
-
-function CardAction({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className
-      )}
-      {...props}
-    />
-  );
-}
-
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-content"
-      className={cn("px-6", className)}
-      {...props}
-    />
-  );
-}
-
-function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-footer"
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
-      {...props}
-    />
-  );
-}
-
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardAction,
-  CardDescription,
-  CardContent,
+// Экспортируем Card как объект с CardRoot и CardSection
+// Это позволяет использовать <Card.Root> и <Card.Section>
+export const Card = {
+  Root: CardRoot,
+  Section: CardSection,
 };

@@ -10,6 +10,7 @@ import { InfiniteData } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
+import { SimpleGrid, Text, Alert } from "@mantine/core";
 
 interface ContentBlockListProps {
   filters: ContentBlockFilters;
@@ -43,19 +44,22 @@ export const ContentBlockList: React.FC<ContentBlockListProps> = ({
   if (isLoading) {
     // Render skeleton for the initial load of the list itself
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <SimpleGrid
+        cols={{ base: 1, xs: 2, sm: 2, md: 3, lg: 4, xl: 5 }}
+        spacing="md"
+      >
         {Array.from({ length: filters.limit || 10 }).map((_, index) => (
           <ContentBlockCardSkeleton key={index} />
         ))}
-      </div>
+      </SimpleGrid>
     );
   }
 
   if (isError) {
     return (
-      <p className="text-red-500 p-4">
+      <Alert title="Ошибка" color="red" variant="light">
         Ошибка при загрузке данных: {error?.message}
-      </p>
+      </Alert>
     );
   }
 
@@ -76,12 +80,16 @@ export const ContentBlockList: React.FC<ContentBlockListProps> = ({
   );
 
   if (processedBlocks.length === 0) {
-    return <p className="p-4">По вашему запросу ничего не найдено.</p>;
+    return <Text p="md">По вашему запросу ничего не найдено.</Text>;
   }
 
   return (
-    <div className="">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div>
+      <SimpleGrid
+        cols={{ base: 1, xs: 2, sm: 2, md: 3, lg: 4, xl: 5 }}
+        spacing="md"
+        mb="md"
+      >
         {processedBlocks.map((item: ContentBlock & { pageIndex: number }) => (
           <ContentBlockCard
             key={item.id}
@@ -90,20 +98,20 @@ export const ContentBlockList: React.FC<ContentBlockListProps> = ({
             currentFilters={filters}
           />
         ))}
-      </div>
+      </SimpleGrid>
       {hasNextPage && (
         <div ref={ref} className="flex justify-center items-center p-4 mt-4">
           {isFetchingNextPage ? (
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           ) : (
-            <span>Загрузить еще...</span> // Можно сделать кнопкой или оставить так для авто-загрузки
+            <span>Загрузить еще...</span>
           )}
         </div>
       )}
       {!hasNextPage && processedBlocks.length > 0 && (
-        <p className="text-center text-gray-500 mt-8 p-4">
+        <Text ta="center" c="dimmed" mt="xl" p="md">
           Все элементы загружены.
-        </p>
+        </Text>
       )}
     </div>
   );

@@ -1,39 +1,42 @@
-import { Card, CardContent, CardFooter, CardHeader } from "@/shared/ui/card";
-import { Skeleton } from "@/shared/ui/skeleton";
+import { Card, Skeleton } from "@/shared/ui";
+import { Group, Divider } from "@mantine/core";
 import React from "react";
 
 export const ContentBlockCardSkeleton: React.FC = () => {
   return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-3/4 mb-2" />
-        <Skeleton className="h-4 w-1/2" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-4 w-full mb-1" />
-        <Skeleton className="h-4 w-full mb-1" />
-        <Skeleton className="h-4 w-5/6 mb-3" />
-        <Skeleton className="h-8 w-full" />{" "}
-        {/* Placeholder for code block info */}
-      </CardContent>
-      <CardFooter className="flex flex-col items-start text-xs text-gray-500">
-        <div className="flex justify-between items-center w-full mb-2">
-          <div className="flex gap-2">
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-6 w-20" />
-          </div>
-          <Skeleton className="h-4 w-16" /> {/* ID Placeholder */}
-        </div>
-        <div className="flex items-center justify-between w-full mt-1 pt-2 border-t">
-          <Skeleton className="h-5 w-20" /> {/* Solved count placeholder */}
-          <div className="flex items-center space-x-1">
-            <Skeleton className="h-7 w-7 rounded-md" />{" "}
+    <Card.Root shadow="sm" padding={0} radius="md" withBorder>
+      <Card.Section inheritPadding py="md">
+        <Skeleton height={24} width="75%" mb="sm" />
+        <Skeleton height={16} width="50%" />
+      </Card.Section>
+
+      <Card.Section inheritPadding py="sm">
+        <Skeleton height={16} mb={8} />
+        <Skeleton height={16} mb={8} />
+        <Skeleton height={16} width="83%" mb="md" />
+        <Skeleton height={32} />
+      </Card.Section>
+
+      <Divider />
+
+      <Card.Section inheritPadding py="sm">
+        <Group justify="space-between" w="100%" mb="sm">
+          <Group gap="sm">
+            <Skeleton height={24} width={80} />
+            <Skeleton height={24} width={80} />
+          </Group>
+          <Skeleton height={16} width={64} /> {/* ID Placeholder */}
+        </Group>
+        <Group justify="space-between" w="100%" mt="xs">
+          <Skeleton height={20} width={80} /> {/* Solved count placeholder */}
+          <Group gap="xs">
+            <Skeleton height={28} width={28} radius="sm" />{" "}
             {/* Decrement button placeholder */}
-            <Skeleton className="h-7 w-7 rounded-md" />{" "}
+            <Skeleton height={28} width={28} radius="sm" />{" "}
             {/* Increment button placeholder */}
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
+          </Group>
+        </Group>
+      </Card.Section>
+    </Card.Root>
   );
 };

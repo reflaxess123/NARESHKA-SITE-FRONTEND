@@ -1,15 +1,13 @@
-import { cn } from "@/shared/lib/utils"
+import {
+  Skeleton as MantineSkeleton,
+  SkeletonProps as MantineSkeletonProps,
+} from "@mantine/core";
+import React from "react";
 
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("animate-pulse rounded-md bg-primary/10", className)}
-      {...props}
-    />
-  )
-}
+export interface SkeletonProps extends MantineSkeletonProps {}
 
-export { Skeleton }
+const Skeleton: React.FC<SkeletonProps> = (props) => {
+  return <MantineSkeleton {...props} />;
+};
+
+export { Skeleton };

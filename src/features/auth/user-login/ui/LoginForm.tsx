@@ -1,8 +1,7 @@
 import { useLoginMutation, useSessionStore } from "@/entities/session";
 import { APP_ROUTES } from "@/shared";
-import { Button } from "@/shared/ui/button"; // Предполагаем наличие этих компонентов
-import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
+import { Button } from "@/shared/ui"; // Обновленные импорты
+import { Stack, Text, TextInput, PasswordInput } from "@mantine/core"; // Дополнительные импорты Mantine
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,14 +43,17 @@ export const LoginForm: React.FC = observer(() => {
     loginMutation.mutate(loginFormStore.loginData);
   };
 
+  // Используем TextInput и PasswordInput из Mantine, наш Input - это обертка над TextInput
   return (
+    // Заменяем className на Stack для управления отступами
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 md:space-y-6 w-full max-w-sm"
+      // className="space-y-4 md:space-y-6 w-full max-w-sm"
+      style={{ width: "100%", maxWidth: "400px" }}
     >
-      <div>
-        <Label htmlFor="email">Электронная почта</Label>
-        <Input
+      <Stack gap="md">
+        <TextInput // Используем TextInput напрямую, так как наш Input не добавляет новой логики для type="email"
+          label="Электронная почта" // Label теперь проп компонента Mantine
           type="email"
           id="email"
           name="email"
@@ -61,13 +63,10 @@ export const LoginForm: React.FC = observer(() => {
           disabled={loginMutation.isPending}
           required
           autoComplete="username"
-          className="border-none mt-2"
+          // className="border-none mt-2" // border-none и mt-2 убираем, стилизуется Mantine
         />
-      </div>
-      <div>
-        <Label htmlFor="password">Пароль</Label>
-        <Input
-          type="password"
+        <PasswordInput // Используем PasswordInput для type="password"
+          label="Пароль"
           id="password"
           name="password"
           placeholder="••••••••"
@@ -76,29 +75,31 @@ export const LoginForm: React.FC = observer(() => {
           disabled={loginMutation.isPending}
           required
           autoComplete="current-password"
-          className="border-none mt-2"
         />
-      </div>
 
-      {(() => {
-        const displayError =
-          loginFormStore.error || (loginMutation.error as Error)?.message;
-        if (displayError) {
-          return (
-            <p className="text-sm font-medium text-red-500">{displayError}</p>
-          );
-        }
-        return null;
-      })()}
+        {(() => {
+          const displayError =
+            loginFormStore.error || (loginMutation.error as Error)?.message;
+          if (displayError) {
+            return (
+              // Заменяем className на Mantine Text
+              <Text size="sm" c="red" fw={500}>
+                {displayError}
+              </Text>
+            );
+          }
+          return null;
+        })()}
 
-      <Button
-        type="submit"
-        disabled={loginMutation.isPending}
-        className="w-full"
-        variant="default"
-      >
-        {loginMutation.isPending ? "Вход..." : "Войти"}
-      </Button>
+        <Button
+          type="submit"
+          loading={loginMutation.isPending} // Используем loading проп
+          fullWidth // Замена className="w-full"
+          variant="filled" // "default" обычно соответствует "filled"
+        >
+          {loginMutation.isPending ? "Вход..." : "Войти"}
+        </Button>
+      </Stack>
     </form>
   );
 });

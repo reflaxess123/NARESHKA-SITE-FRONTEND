@@ -1,5 +1,4 @@
-import { Button } from "@/shared/ui/button";
-import { PageWrapper } from "@/shared/ui/PageWrapper";
+import { Button, PageWrapper } from "@/shared/ui";
 import {
   ALL_ITEMS_VALUE,
   ContentBlockList,
@@ -7,18 +6,18 @@ import {
   ContentFilters,
   ContentFiltersState,
 } from "@/widgets/content";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Title, Group, Box, Container } from "@mantine/core";
+import { ArrowLeft } from "lucide-react";
 
 const DEFAULT_PAGE_LIMIT = 10; // Определим константу для лимита
-
-// const initialFilterState: ContentFiltersState = { // Удалено, так как больше не используется напрямую
-//   searchText: "",
-//   mainCategory: ALL_ITEMS_VALUE,
-//   subCategory: ALL_ITEMS_VALUE,
-//   sortBy: "orderInFile", // Default sort option
-//   sortOrder: "asc", // Default sort order
-// };
 
 // Helper function to get filters from search params
 const getFiltersFromSearchParams = (
@@ -41,13 +40,14 @@ export const NareshkaPage: React.FC = () => {
   const [filters, setFilters] = useState<ContentFiltersState>(() =>
     getFiltersFromSearchParams(searchParams)
   );
-  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(
-    () => searchParams.get("modalBlockId") // Инициализация selectedBlockId из URL
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(() =>
+    searchParams.get("modalBlockId")
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(
-    () => !!searchParams.get("modalBlockId") // Инициализация isModalOpen из URL
+    () => !!searchParams.get("modalBlockId")
   );
   const navigate = useNavigate();
+  const prevModalIdFromUrl = useRef<string | null>(null); // Ref to store previous modalIdFromUrl
 
   // Effect to synchronize selectedBlockId and isModalOpen with URL (modalBlockId)
   useEffect(() => {
@@ -70,14 +70,25 @@ export const NareshkaPage: React.FC = () => {
   // Effect to initialize modal state from URL on first load or direct navigation
   useEffect(() => {
     const modalIdFromUrl = searchParams.get("modalBlockId");
-    if (modalIdFromUrl && !selectedBlockId && !isModalOpen) {
-      setSelectedBlockId(modalIdFromUrl);
-      setIsModalOpen(true);
+
+    // Only proceed if modalIdFromUrl has actually changed (or on initial render when prev is null)
+    // and the modal is not already open with the same ID.
+    if (modalIdFromUrl && modalIdFromUrl !== prevModalIdFromUrl.current) {
+      if (!selectedBlockId && !isModalOpen) {
+        // Original condition: only if modal is fully closed
+        setSelectedBlockId(modalIdFromUrl);
+        setIsModalOpen(true);
+      }
     }
-    // Этот эффект должен запускаться только один раз или когда searchParams меняются извне,
-    // но не должен конфликтовать с предыдущим эффектом.
-    // Мы не добавляем selectedBlockId и isModalOpen в зависимости, чтобы избежать циклов.
-  }, [searchParams]);
+    // Update the ref for the next render AFTER all logic.
+    prevModalIdFromUrl.current = modalIdFromUrl;
+  }, [
+    searchParams,
+    selectedBlockId,
+    isModalOpen,
+    setSelectedBlockId,
+    setIsModalOpen,
+  ]); // All dependencies included
 
   // Effect to update filters state when searchParams change (e.g., browser back/forward)
   useEffect(() => {
@@ -160,24 +171,22 @@ export const NareshkaPage: React.FC = () => {
 
   return (
     <PageWrapper>
-      <div className="mx-auto">
-        <div className="flex items-center mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate(-1)}
-            className="w-[100px] p-4 mr-4"
-          >
-            Назад
+      <Container size="lg">
+        <Group align="center" mb="xl">
+          <Button variant="outline" onClick={() => navigate(-1)} mr="md">
+            <ArrowLeft />
           </Button>
-          <h1 className="text-3xl font-bold text-center flex-grow">Нарешка</h1>
-        </div>
+          <Title order={1} style={{ textAlign: "center", flexGrow: 1 }}>
+            Нарешка
+          </Title>
+        </Group>
 
-        <div className="mb-8">
+        <Box mb="xl">
           <ContentFilters
             initialFilters={filters}
             onFiltersChange={handleFiltersChange}
           />
-        </div>
+        </Box>
 
         <ContentBlockList filters={apiFilters} onCardClick={handleCardClick} />
 
@@ -186,7 +195,7 @@ export const NareshkaPage: React.FC = () => {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
         />
-      </div>
+      </Container>
     </PageWrapper>
   );
 };

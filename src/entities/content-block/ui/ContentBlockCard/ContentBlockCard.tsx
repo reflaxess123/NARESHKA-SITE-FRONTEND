@@ -1,14 +1,6 @@
 import { useUpdateContentProgress } from "@/features/content";
-import { Badge } from "@/shared/ui/badge";
-import { Button } from "@/shared/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/shared/ui/card";
+import { Badge, Card } from "@/shared/ui";
+import { ActionIcon, Group, Paper, Text, Title, Divider } from "@mantine/core";
 import { Check, Minus, Plus } from "lucide-react";
 import React from "react";
 import { DiJavascript1, DiReact } from "react-icons/di";
@@ -61,85 +53,105 @@ export const ContentBlockCard: React.FC<ContentBlockCardProps> = ({
   const IconComponent = categoryIcons[block.file.mainCategory.toUpperCase()];
 
   return (
-    <Card
-      className={
-        "cursor-pointer hover:shadow-lg transition-shadow duration-200"
-      }
+    <Card.Root
+      shadow="sm"
+      padding={0}
+      radius="md"
+      withBorder
       onClick={handleCardClick}
+      style={{ cursor: "pointer" }}
     >
-      <CardHeader>
-        <div className="flex items-center">
+      <Card.Section inheritPadding py="md" px="md">
+        <Group wrap="nowrap">
           {IconComponent && (
-            <IconComponent className="h-6 w-6 mr-2 text-gray-600" />
+            <IconComponent
+              size={24}
+              style={{
+                marginRight: "8px",
+                color: "var(--mantine-color-gray-6)",
+              }}
+            />
           )}
-          <CardTitle className="text-lg">{block.blockTitle}</CardTitle>
-        </div>
+          <Title order={4} lineClamp={1}>
+            {block.blockTitle}
+          </Title>
+        </Group>
         {block.pathTitles && block.pathTitles.length > 0 && (
-          <CardDescription className="text-xs text-gray-500 mt-1">
+          <Text size="xs" c="dimmed" mt={4} lineClamp={2}>
             {block.pathTitles.join(" / ")}
-          </CardDescription>
+          </Text>
         )}
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-gray-700 mb-2">
+      </Card.Section>
+
+      <Card.Section inheritPadding py="sm" px="md">
+        <Text size="sm" c="gray.7" mb="sm" lineClamp={3}>
           {getShortTextContent(block.textContent)}
-        </p>
+        </Text>
         {block.codeContent && (
-          <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-            <p className="font-semibold">
+          <Paper p="xs" radius="sm" mt="sm" withBorder>
+            <Text size="xs" fw={600}>
               Есть блок кода ({block.codeLanguage || "не указан"})
-            </p>
-          </div>
+            </Text>
+          </Paper>
         )}
-      </CardContent>
-      <CardFooter className="flex flex-col items-start text-xs text-gray-500">
-        <div className="flex justify-between items-center w-full mb-2">
-          <div>
-            <Badge variant="outline" className="mr-2">
-              {block.file.mainCategory}
-            </Badge>
-            <Badge variant="secondary">{block.file.subCategory}</Badge>
-          </div>
-          <span className="text-gray-400">ID: {block.id.slice(0, 6)}..</span>
-        </div>
-        <div className="flex items-center justify-between w-full mt-1 pt-2 border-t">
-          <div className="flex items-center">
+      </Card.Section>
+
+      <Divider />
+
+      <Card.Section inheritPadding py="sm" px="md">
+        <Group justify="space-between" w="100%" mb="sm">
+          <Group gap="xs">
+            <Badge variant="outline">{block.file.mainCategory}</Badge>
+            <Badge variant="light">{block.file.subCategory}</Badge>
+          </Group>
+          <Text size="xs" c="gray.5">
+            ID: {block.id.slice(0, 6)}..
+          </Text>
+        </Group>
+        <Group justify="space-between" w="100%" mt="xs">
+          <Group gap={4}>
             {Array.from({ length: block.currentUserSolvedCount || 0 }).map(
               (_, i) => (
                 <Check
                   key={i}
-                  className="h-5 w-5 text-green-500 mr-1 transition-all duration-300 ease-in-out opacity-100 scale-100"
+                  size={20}
+                  color="var(--mantine-color-green-6)"
+                  style={{ marginRight: "2px" }}
                 />
               )
             )}
             {(block.currentUserSolvedCount || 0) === 0 && (
-              <span className="text-xs text-gray-400 italic">Не решено</span>
+              <Text size="xs" c="dimmed" fs="italic">
+                Не решено
+              </Text>
             )}
-          </div>
-          <div className="flex items-center space-x-1">
-            <Button
-              size="icon"
+          </Group>
+          <Group gap="xs">
+            <ActionIcon
+              size="sm"
               variant="outline"
-              className="progress-button h-7 w-7 p-0"
+              className="progress-button"
               onClick={() => handleProgressChange("decrement")}
               disabled={
                 isUpdatingProgress || (block.currentUserSolvedCount || 0) === 0
               }
+              aria-label="Уменьшить прогресс"
             >
-              <Minus className="h-4 w-4" />
-            </Button>
-            <Button
-              size="icon"
+              <Minus size={16} />
+            </ActionIcon>
+            <ActionIcon
+              size="sm"
               variant="outline"
-              className="progress-button h-7 w-7 p-0"
+              className="progress-button"
               onClick={() => handleProgressChange("increment")}
               disabled={isUpdatingProgress}
+              aria-label="Увеличить прогресс"
             >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
+              <Plus size={16} />
+            </ActionIcon>
+          </Group>
+        </Group>
+      </Card.Section>
+    </Card.Root>
   );
 };

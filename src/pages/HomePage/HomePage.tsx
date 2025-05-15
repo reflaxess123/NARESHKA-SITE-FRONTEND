@@ -1,11 +1,14 @@
 import { useLogoutMutation, useSessionStore } from "@/entities/session";
-import { APP_ROUTES, PageWrapper } from "@/shared";
-import { Button } from "@/shared/ui/button";
+import { APP_ROUTES } from "@/shared";
+import { Button, PageWrapper } from "@/shared/ui";
+import { Title, Text, Group, Stack, Center, Flex } from "@mantine/core";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { ThemeToggler } from "@/features/theme-toggler";
+import { notifications } from "@mantine/notifications";
 
-const HomePageInternal: React.FC = () => {
+const HomePageInternal: React.FC = observer(() => {
   const sessionStore = useSessionStore();
   const navigate = useNavigate();
 
@@ -14,7 +17,11 @@ const HomePageInternal: React.FC = () => {
       navigate(APP_ROUTES.LOGIN.path, { replace: true });
     },
     onError: (error) => {
-      alert(error.message || "Не удалось выйти. Попробуйте снова.");
+      notifications.show({
+        title: "Ошибка выхода",
+        message: error.message || "Не удалось выйти. Попробуйте снова.",
+        color: "red",
+      });
     },
   });
 
@@ -24,90 +31,95 @@ const HomePageInternal: React.FC = () => {
 
   if (!sessionStore.currentUser) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Ошибка: пользователь не найден, хотя сессия активна.</p>
-      </div>
+      <Center style={{ minHeight: "100vh" }}>
+        <Text>Ошибка: пользователь не найден, хотя сессия активна.</Text>
+      </Center>
     );
   }
 
   return (
     <PageWrapper>
-      <div className="text-1xl text-black">
-        <div className="flex justify-end items-center gap-2">
+      <Flex
+        p="md"
+        justify="space-between"
+        align="center"
+        style={{ borderBottom: "1px solid var(--mantine-color-divider)" }}
+      >
+        <ThemeToggler />
+
+        <Group gap="sm">
           {sessionStore.isAuthenticated ? (
             <>
-              <div className="flex flex-wrap gap-2">
-                <Button asChild>
-                  <Link
-                    to={APP_ROUTES.HOME.path}
-                    className="hover:text-gray-500"
-                  >
-                    Главная
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link
-                    to={APP_ROUTES.NARESHKA.path}
-                    className="hover:text-gray-500"
-                  >
-                    Нарешка
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link
-                    to={APP_ROUTES.PROFILE.path}
-                    className="hover:text-gray-500"
-                  >
-                    Профиль ({sessionStore.currentUser?.email})
-                  </Link>
-                </Button>
-                <Button
-                  onClick={handleLogout}
-                  variant="default"
-                  disabled={logoutMutation.isPending}
-                  className="hover:text-gray-500"
-                >
-                  {logoutMutation.isPending ? "Выход..." : "Выйти"}
-                </Button>
-              </div>
+              <Button
+                component={RouterLink}
+                to={APP_ROUTES.HOME.path}
+                variant="subtle"
+              >
+                Главная
+              </Button>
+              <Button
+                component={RouterLink}
+                to={APP_ROUTES.NARESHKA.path}
+                variant="subtle"
+              >
+                Нарешка
+              </Button>
+              <Button
+                component={RouterLink}
+                to={APP_ROUTES.PROFILE.path}
+                variant="subtle"
+              >
+                Профиль ({sessionStore.currentUser?.email})
+              </Button>
+              <Button
+                onClick={handleLogout}
+                variant="filled"
+                loading={logoutMutation.isPending}
+                color="red"
+              >
+                Выйти
+              </Button>
             </>
           ) : (
             <>
               {!sessionStore.isSessionLoading && (
                 <>
-                  <Button asChild>
-                    <Link
-                      to={APP_ROUTES.LOGIN.path}
-                      className="hover:text-gray-500"
-                    >
-                      Вход
-                    </Link>
+                  {/* Обертка React.Fragment для двух кнопок */}
+                  <Button
+                    component={RouterLink}
+                    to={APP_ROUTES.LOGIN.path}
+                    variant="subtle"
+                  >
+                    Вход
                   </Button>
-                  <Button asChild>
-                    <Link
-                      to={APP_ROUTES.REGISTER.path}
-                      className="hover:text-gray-500"
-                    >
-                      Регистрация
-                    </Link>
+                  <Button
+                    component={RouterLink}
+                    to={APP_ROUTES.REGISTER.path}
+                    variant="subtle"
+                  >
+                    Регистрация
                   </Button>
                 </>
               )}
             </>
           )}
-        </div>
-      </div>
-      <div className="flex flex-col items-center justify-center p-4 text-center pt-64">
-        <h1 className="text-4xl font-bold mb-6">
+        </Group>
+      </Flex>
+      <Stack
+        align="center"
+        justify="center"
+        style={{ paddingTop: "16rem", textAlign: "center" }}
+      >
+        <Title order={1} mb="lg">
           Добро пожаловать, {sessionStore.currentUser.email}!
-        </h1>
-        <p className="text-lg mb-8">
+        </Title>
+        <Text size="lg" mb="xl">
           Вы успешно вошли в систему. Ваш профиль и опция выхода доступны в
           панели навигации.
-        </p>
-      </div>
+        </Text>
+      </Stack>
     </PageWrapper>
   );
-};
+});
 
-export const HomePage = observer(HomePageInternal);
+export const HomePage = HomePageInternal;
