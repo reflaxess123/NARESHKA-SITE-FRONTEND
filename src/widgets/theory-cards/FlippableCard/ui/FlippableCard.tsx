@@ -151,7 +151,7 @@ export const FlippableCard: React.FC<FlippableCardProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">
-                    Решено: {card.currentUserSolvedCount}
+                    Просмотрено: {card.currentUserSolvedCount}
                   </span>
                   {!isFullscreenMode && (
                     <Button
