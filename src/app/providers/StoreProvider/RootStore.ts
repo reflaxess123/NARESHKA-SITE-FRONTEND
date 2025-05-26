@@ -1,3 +1,4 @@
+import { TheoryStore } from "@/entities/theory-card";
 import { QueryClient } from "@tanstack/react-query";
 import { makeAutoObservable } from "mobx";
 import { SessionStore } from "../../../entities/session/model/SessionStore"; // Изменен на прямой путь к модели
@@ -7,11 +8,13 @@ import { SessionStore } from "../../../entities/session/model/SessionStore"; // 
 
 export class RootStore {
   sessionStore: SessionStore;
+  theoryStore: TheoryStore;
   queryClient: QueryClient;
 
   constructor(queryClient: QueryClient) {
     this.queryClient = queryClient;
     this.sessionStore = new SessionStore(this, this.queryClient);
+    this.theoryStore = new TheoryStore(this, this.queryClient);
     makeAutoObservable(
       this,
       {

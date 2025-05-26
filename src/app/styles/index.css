@@ -105,3 +105,29 @@
   ); /* Как новый --border (очень-очень темная) */
   --sidebar-ring: oklch(0.6 0.18 250 / 0.5); /* Как ring */
 }
+
+/* Стили для контента теоретических карточек */
+.theory-card-content img {
+  @apply max-w-full w-auto h-auto object-contain rounded block mx-auto my-2;
+  max-height: 200px !important;
+}
+
+.theory-card-content-fullscreen img {
+  @apply max-w-full w-auto h-auto object-contain rounded block mx-auto my-2;
+  max-height: 400px !important;
+}
+
+.theory-card-content pre,
+.theory-card-content-fullscreen pre {
+  @apply max-w-full overflow-x-auto whitespace-pre-wrap break-words;
+}
+
+.theory-card-content code,
+.theory-card-content-fullscreen code {
+  @apply max-w-full overflow-x-auto break-words;
+}
+
+.theory-card-content table,
+.theory-card-content-fullscreen table {
+  @apply max-w-full overflow-x-auto block whitespace-nowrap;
+}

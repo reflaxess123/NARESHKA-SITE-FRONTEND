@@ -1,12 +1,12 @@
+import { useLogoutMutation, useSessionStore } from "@/entities/session";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher/ThemeSwitcher";
+import { APP_ROUTES, PageWrapper } from "@/shared";
+import { cn } from "@/shared/lib/utils";
+import { Sidebar, SidebarBody, SidebarLink } from "@/shared/ui/sidebar";
+import { BookOpen, Home, LogOut, Settings, User } from "lucide-react";
+import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { observer } from "mobx-react-lite";
-import { useLogoutMutation, useSessionStore } from "@/entities/session";
-import { APP_ROUTES, PageWrapper } from "@/shared";
-import { Sidebar, SidebarBody, SidebarLink } from "@/shared/ui/sidebar";
-import { Home, User, LogOut, Settings } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
-import { ThemeSwitcher } from "@/features/ThemeSwitcher/ThemeSwitcher";
 
 const AppLayoutInternal: React.FC = () => {
   const sessionStore = useSessionStore();
@@ -46,6 +46,13 @@ const AppLayoutInternal: React.FC = () => {
       href: APP_ROUTES.HOME.path,
       icon: (
         <Home className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      ),
+    },
+    {
+      label: "Теория",
+      href: APP_ROUTES.THEORY.path,
+      icon: (
+        <BookOpen className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
@@ -144,10 +151,17 @@ const AppLayoutInternal: React.FC = () => {
       </div>
 
       <div className="flex-1 flex flex-col overflow-y-auto relative">
+        {/* Затемнение при раскрытом сайдбаре */}
+        <div
+          className={`hidden md:block fixed inset-0 bg-black/20 z-30 transition-opacity duration-300 ${
+            sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        />
+
         <div className="hidden md:block md:fixed top-4 right-4 z-50">
           <ThemeSwitcher />
         </div>
-        <div className="p-2 md:p-10 flex-grow">
+        <div className="p-2 md:p-10 flex-grow relative z-10">
           <PageWrapper>
             <Outlet />
           </PageWrapper>

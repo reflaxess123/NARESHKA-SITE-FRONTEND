@@ -1,11 +1,17 @@
 import { useSessionStore } from "@/entities/session";
 import { ProtectedRoute } from "@/features";
-import { HomePage, NareshkaPage, ProfilePage } from "@/pages";
+import {
+  HomePage,
+  NareshkaPage,
+  ProfilePage,
+  TheoryPage,
+  TheoryReviewPage,
+} from "@/pages";
 import { APP_ROUTES } from "@/shared";
+import { AppLayout } from "@/widgets/Layout/AppLayout";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { AppLayout } from "@/widgets/Layout/AppLayout";
 
 const AppRoutes: React.FC = observer(() => {
   const sessionStore = useSessionStore();
@@ -27,6 +33,8 @@ const AppRoutes: React.FC = observer(() => {
         <Route element={<ProtectedRoute />}>
           <Route path={APP_ROUTES.PROFILE.path} element={<ProfilePage />} />
           <Route path={APP_ROUTES.NARESHKA.path} element={<NareshkaPage />} />
+          <Route path={APP_ROUTES.THEORY.path} element={<TheoryPage />} />
+          <Route path="/theory/review" element={<TheoryReviewPage />} />
         </Route>
       </Route>
     </Routes>

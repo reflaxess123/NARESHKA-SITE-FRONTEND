@@ -1,12 +1,12 @@
 "use client";
 
+import { ThemeSwitcher } from "@/features/ThemeSwitcher/ThemeSwitcher";
 import { cn } from "@/shared/lib/utils";
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { useSidebar, SidebarContext } from "./useSidebar";
-import { ThemeSwitcher } from "@/features/ThemeSwitcher/ThemeSwitcher";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { SidebarContext, useSidebar } from "./useSidebar";
 
 interface Links {
   label: string;
@@ -73,7 +73,7 @@ export const DesktopSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-screen top-0 sticky hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-950 w-[300px] flex-shrink-0",
+        "h-screen top-0 fixed left-0 z-40 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-950 w-[300px]",
         "px-4 py-4",
         className
       )}

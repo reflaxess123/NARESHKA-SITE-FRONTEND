@@ -16,6 +16,15 @@ export default {
         "2xl": "1400px",
       },
     },
+    screens: {
+      xs: "475px",
+      sm: "640px",
+      md: "850px",
+      lg: "1150px",
+      xl: "1280px",
+      "2xl": "1536px",
+      "3xl": "1920px",
+    },
     extend: {
       colors: {
         border: "var(--border)",
@@ -93,6 +102,12 @@ export default {
         "content-hide": "content-hide 0.15s cubic-bezier(0.16, 1, 0.3, 1)",
         "slide-in-from-top": "slide-in-from-top 0.3s ease-out",
         "slide-out-to-top": "slide-out-to-top 0.3s ease-in",
+      },
+      perspective: {
+        1000: "1000px",
+      },
+      screens: {
+        "3xl": "1920px",
       },
     },
   },

@@ -14,3 +14,4 @@ export type {
   SessionStoreType,
   User,
 } from "./session";
+export * from "./theory-card";

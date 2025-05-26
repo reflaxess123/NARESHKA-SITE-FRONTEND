@@ -1,4 +1,9 @@
 import { useSessionStore } from "@/entities/session";
+import { useTheoryStore } from "@/entities/theory-card";
+import {
+  fetchGeneralStats,
+  spacedRepetitionKeys,
+} from "@/entities/theory-card/api/spacedRepetitionApi";
 import { PageWrapper } from "@/shared";
 import {
   Card,
@@ -7,11 +12,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
+import { AchievementStats } from "@/widgets/profile/AchievementStats/ui/AchievementStats";
+import { ProgressCharts } from "@/widgets/profile/ProgressCharts/ui/ProgressCharts";
+import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 
 const ProfilePageInternal: React.FC = () => {
   const sessionStore = useSessionStore();
+  const theoryStore = useTheoryStore();
+
+  // Запрос общей статистики интервального повторения
+  const { data: generalStats } = useQuery({
+    queryKey: spacedRepetitionKeys.generalStats(),
+    queryFn: fetchGeneralStats,
+    staleTime: 5 * 60 * 1000, // 5 минут
+  });
+
+  // Обновляем store при получении статистики
+  useEffect(() => {
+    if (generalStats) {
+      theoryStore.setGeneralStats(generalStats);
+    }
+  }, [generalStats, theoryStore]);
 
   if (!sessionStore.currentUser) {
     return (
@@ -25,30 +48,44 @@ const ProfilePageInternal: React.FC = () => {
 
   return (
     <PageWrapper>
-      <div className="flex flex-col items-center justify-center flex-1 min-h-full">
-        <Card className="w-full max-w-md">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Заголовок профиля */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-2">Профиль пользователя</h1>
+          <p className="text-muted-foreground">
+            Добро пожаловать, {currentUser.email}!
+          </p>
+        </div>
+
+        {/* Основная информация */}
+        <Card className="max-w-md mx-auto">
           <CardHeader>
-            <CardTitle className="text-2xl">Профиль пользователя</CardTitle>
-            <CardDescription>
-              Это ваша защищенная страница профиля.
-            </CardDescription>
+            <CardTitle className="text-xl">Основная информация</CardTitle>
+            <CardDescription>Ваши данные и дата регистрации</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="space-y-2">
-              <p>
-                <span className="font-semibold">ID:</span> {currentUser.id}
-              </p>
-              <p>
-                <span className="font-semibold">Email:</span>{" "}
-                {currentUser.email}
-              </p>
-              <p>
-                <span className="font-semibold">Дата регистрации:</span>{" "}
+          <CardContent className="space-y-3">
+            <div className="flex justify-between">
+              <span className="font-medium">ID:</span>
+              <span className="text-muted-foreground">{currentUser.id}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">Email:</span>
+              <span className="text-muted-foreground">{currentUser.email}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">Дата регистрации:</span>
+              <span className="text-muted-foreground">
                 {new Date(currentUser.createdAt).toLocaleDateString()}
-              </p>
+              </span>
             </div>
           </CardContent>
         </Card>
+
+        {/* Достижения и статистика */}
+        <AchievementStats />
+
+        {/* Графики прогресса */}
+        <ProgressCharts />
       </div>
     </PageWrapper>
   );
