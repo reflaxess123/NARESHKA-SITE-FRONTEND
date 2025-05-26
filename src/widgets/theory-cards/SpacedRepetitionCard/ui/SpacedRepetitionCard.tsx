@@ -70,6 +70,19 @@ export const SpacedRepetitionCard: React.FC<SpacedRepetitionCardProps> = ({
   className = "",
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [contentSide, setContentSide] = useState<"front" | "back">("front");
+
+  // Управление сменой контента в середине анимации
+  React.useEffect(() => {
+    if (isFlipped !== (contentSide === "back")) {
+      // Задержка в половину времени анимации (0.3 секунды из 0.6)
+      const timer = setTimeout(() => {
+        setContentSide(isFlipped ? "back" : "front");
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isFlipped, contentSide]);
 
   const handleFlip = () => {
     if (!isLoading) {
@@ -81,6 +94,7 @@ export const SpacedRepetitionCard: React.FC<SpacedRepetitionCardProps> = ({
     if (!isLoading) {
       onReview(rating);
       setIsFlipped(false); // Сбрасываем карточку для следующей
+      setContentSide("front"); // Сбрасываем контент на лицевую сторону
     }
   };
 
@@ -127,7 +141,7 @@ export const SpacedRepetitionCard: React.FC<SpacedRepetitionCardProps> = ({
           style={cardStyle}
         >
           {/* Лицевая сторона - Вопрос */}
-          {!isFlipped && (
+          {contentSide === "front" && (
             <Card
               className="absolute inset-0 w-full h-full border-2 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
               onClick={handleFlip}
@@ -151,7 +165,10 @@ export const SpacedRepetitionCard: React.FC<SpacedRepetitionCardProps> = ({
                   </div>
                   <div className="flex flex-col items-end gap-1 text-xs text-muted-foreground">
                     {card.isOverdue && (
-                      <Badge variant="destructive" className="text-xs">
+                      <Badge
+                        variant="destructive"
+                        className="text-xs text-black"
+                      >
                         Просрочено
                       </Badge>
                     )}
@@ -184,7 +201,7 @@ export const SpacedRepetitionCard: React.FC<SpacedRepetitionCardProps> = ({
           )}
 
           {/* Обратная сторона - Ответ и оценки */}
-          {isFlipped && (
+          {contentSide === "back" && (
             <Card
               className="absolute inset-0 w-full h-full border-2 border-green-500/20 hover:border-green-500/40 transition-colors cursor-pointer"
               onClick={handleFlip}

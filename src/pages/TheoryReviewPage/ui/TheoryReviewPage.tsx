@@ -127,6 +127,7 @@ export const TheoryReviewPage: React.FC = observer(() => {
   };
 
   const handleBackToTheory = () => {
+    theoryStore.setStudyMode("classic");
     navigate("/theory");
   };
 
@@ -280,7 +281,7 @@ export const TheoryReviewPage: React.FC = observer(() => {
             intervals={intervals}
             onReview={handleReview}
             isLoading={reviewMutation.isPending}
-            className="max-w-2xl"
+            className=""
           />
         </div>
       )}
